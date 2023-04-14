@@ -2,12 +2,13 @@
 #include <string.h>
 #include "commands.h"
 
+
+const int commandCount = 8;
 bool commandCanTakeArguments(CommandName name) {
     return (name == LD || name == SI || name == SD);
 }
 
 Command parseCommand(char* commandString) {
-    const int commandCount = 8;
     char* commandStrings[commandCount];
     commandStrings[0] = "LD";
     commandStrings[1] = "SW";
@@ -132,6 +133,69 @@ Command makeGameMoveCommand(char* potentialMove) {
         return malformedCommand;
     }
     
-    Command moveCommand = {Move, true, potentialMove};
+    Command moveCommand = {MOVE, true, potentialMove};
     return moveCommand;
+}
+
+char* commandToString(Command command) {
+    if (command.name == MOVE) {
+        return command.arguments;
+    }
+    if (command.name == INVALID) {
+        char* errorPrefix = "[ERROR]";
+        char* stringRepresentation = malloc(strlen(errorPrefix) + 1 + strlen(command.arguments));
+        int currentIndex = 0;
+
+        for (int i = 0; i < strlen(errorPrefix); i++) {
+            stringRepresentation[currentIndex] = errorPrefix[i];
+            currentIndex++;
+        }
+        stringRepresentation[currentIndex] = ' ';
+        currentIndex++;
+        for (int i = 0; i < strlen(command.arguments); i++) {
+            stringRepresentation[currentIndex] = command.arguments[i];
+            currentIndex++;
+        }
+        
+        return stringRepresentation;
+    }
+
+    if (command.name > commandCount) {
+        return "";
+    }
+
+    char* commandStrings[commandCount];
+    commandStrings[0] = "LD";
+    commandStrings[1] = "SW";
+    commandStrings[2] = "SI";
+    commandStrings[3] = "SR";
+    commandStrings[4] = "SD";
+    commandStrings[5] = "QQ";
+    commandStrings[6] = "P";
+    commandStrings[7] = "Q";
+
+    char* commandName = commandStrings[command.name - 1];
+    char* stringRepresentation;
+    int stringLength = strlen(commandName);
+
+    if (command.hasArguments) {
+        stringLength += 1 + strlen(command.arguments);
+    }
+    stringRepresentation = malloc(stringLength);
+
+    int currentIndex = 0;
+    for (int i = 0; i < strlen(commandName); i++) {
+        stringRepresentation[currentIndex] = commandName[i];
+        currentIndex++;
+    }
+
+    if (command.hasArguments) {
+        stringRepresentation[currentIndex] = ' ';
+        currentIndex++;
+        for (int i = 0; i < strlen(command.arguments); i++) {
+            stringRepresentation[currentIndex] = command.arguments[i];
+            currentIndex++;
+        }    
+    }
+    return stringRepresentation;
 }

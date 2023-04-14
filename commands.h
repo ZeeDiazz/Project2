@@ -10,7 +10,7 @@ typedef enum CommandName {
     QQ,
     P,
     Q,
-    Move,
+    MOVE,
 } CommandName;
 
 typedef struct Command {
@@ -22,3 +22,4 @@ typedef struct Command {
 bool commandCanTakeArguments(CommandName name);
 Command parseCommand(char* command);
 Command makeGameMoveCommand(char* potentialMove);
+char* commandToString(Command command);
