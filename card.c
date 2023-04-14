@@ -14,6 +14,7 @@ typedef enum {
     Six,
     Seven,
     Eight,
+    Nine,
     Ten,
     Jack,
     Queen,
