@@ -1,7 +1,7 @@
 #include "stdbool.h"
 
 typedef enum CommandName {
-    INVALID,
+    INVALID = 0,
     LD = 1,
     SW,
     SI,
