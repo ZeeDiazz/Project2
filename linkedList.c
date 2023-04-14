@@ -1,9 +1,13 @@
 #include <stdbool.h>
+#include <stdlib.h>
 #include "linkedList.h"
 
+struct Node* head = NULL;
 
+void add(int a){
+
+}
 void addFirst(int a){
-    struct node *head;
 
     //allocate memory
 
@@ -18,6 +22,6 @@ void delete(int a){
 }
 
 bool isEmpty(){
-    return true;
+    return head == NULL;
 }
 
