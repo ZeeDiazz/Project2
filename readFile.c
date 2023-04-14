@@ -26,5 +26,3 @@ Deck loadDeck(char* filename){
 
 
 
-Deck convertCardCard (char*){
-}

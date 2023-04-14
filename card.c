@@ -17,3 +17,10 @@ Deck makeDeck() {
     return *deck;
 }
 
+Card stringToCard(char* string) {
+
+    if (string[1] == 'C'){
+
+    }
+
+}
