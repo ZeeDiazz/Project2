@@ -25,3 +25,14 @@ typedef struct {
     CardSuit suit;
     CardValue value;
 } Card;
+
+typedef struct {
+    Card* cards[52];
+} Deck;
+
+
+Deck makeDeck();
+
+
+
+

@@ -1,3 +1,19 @@
-//
-// Created by zegho on 14-04-2023.
-//
+#include <stdio.h>
+#include "card.h"
+
+Deck makeDeck() {
+    Card cards[52];
+    int currentIndex = 0;
+
+    for (CardSuit suit = Clubs; suit <= Hearts; suit++) {
+        for (CardValue cardValue = 1; cardValue <= 13; cardValue++) {
+            Card currentCard = {suit, cardValue};
+            cards[currentIndex] = currentCard;
+            currentIndex++;
+        }
+    }
+
+    Deck deck = {cards};
+    return deck;
+}
+
