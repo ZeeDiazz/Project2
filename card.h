@@ -27,7 +27,7 @@ typedef struct {
 } Card;
 
 typedef struct {
-    Card* cards[52];
+    Card cards[52];
 } Deck;
 
 

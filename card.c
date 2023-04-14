@@ -13,7 +13,7 @@ Deck makeDeck() {
         }
     }
 
-    Deck deck = {cards};
-    return deck;
+    Deck *deck = {cards};
+    return *deck;
 }
 
