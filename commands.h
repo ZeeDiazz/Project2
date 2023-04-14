@@ -1,7 +1,8 @@
 #include "stdbool.h"
 
-typedef enum {
-    LD = 0,
+typedef enum CommandName {
+    INVALID,
+    LD = 1,
     SW,
     SI,
     SR,
@@ -12,7 +13,7 @@ typedef enum {
     Move,
 } CommandName;
 
-typedef struct {
+typedef struct Command {
     CommandName name;
     bool hasArguments;
     char* arguments;
@@ -20,3 +21,4 @@ typedef struct {
 
 bool commandCanTakeArguments(CommandName name);
 Command parseCommand(char* command);
+Command makeGameMoveCommand(char* potentialMove);
