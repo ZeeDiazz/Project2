@@ -138,8 +138,26 @@ Command makeGameMoveCommand(char* potentialMove) {
 }
 
 char* commandToString(Command command) {
-    if (command.name == INVALID || command.name == MOVE) {
+    if (command.name == MOVE) {
         return command.arguments;
+    }
+    if (command.name == INVALID) {
+        char* errorPrefix = "[ERROR]";
+        char* stringRepresentation = malloc(strlen(errorPrefix) + 1 + strlen(command.arguments));
+        int currentIndex = 0;
+
+        for (int i = 0; i < strlen(errorPrefix); i++) {
+            stringRepresentation[currentIndex] = errorPrefix[i];
+            currentIndex++;
+        }
+        stringRepresentation[currentIndex] = ' ';
+        currentIndex++;
+        for (int i = 0; i < strlen(command.arguments); i++) {
+            stringRepresentation[currentIndex] = command.arguments[i];
+            currentIndex++;
+        }
+        
+        return stringRepresentation;
     }
 
     if (command.name > commandCount) {
@@ -156,14 +174,14 @@ char* commandToString(Command command) {
     commandStrings[6] = "P";
     commandStrings[7] = "Q";
 
-    char* commandName = commandStrings[command.name];
+    char* commandName = commandStrings[command.name - 1];
     char* stringRepresentation;
     int stringLength = strlen(commandName);
 
     if (command.hasArguments) {
         stringLength += 1 + strlen(command.arguments);
     }
-    stringRepresentation = malloc(commandName);
+    stringRepresentation = malloc(stringLength);
 
     int currentIndex = 0;
     for (int i = 0; i < strlen(commandName); i++) {
