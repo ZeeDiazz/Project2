@@ -5,7 +5,7 @@ Deck makeDeck() {
     Card cards[52];
     int currentIndex = 0;
 
-    for (CardSuit suit = Clubs; suit <= Hearts; suit++) {
+    for (CardSuit suit = Clubs; suit <= Spades; suit++) {
         for (CardValue cardValue = 1; cardValue <= 13; cardValue++) {
             Card currentCard = {suit, cardValue};
             cards[currentIndex] = currentCard;
@@ -17,10 +17,3 @@ Deck makeDeck() {
     return *deck;
 }
 
-Card stringToCard(char* string) {
-
-    if (string[1] == 'C'){
-
-    }
-
-}
