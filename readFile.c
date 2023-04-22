@@ -107,6 +107,9 @@ Card assignCard(char *lineFromFile) {
         case 'K':
             card.value = King;
             break;
+        default:
+            card.value = (CardValue) NULL;
+            return card;
     }
 
     switch (toupper(lineFromFile[1])) {
@@ -122,6 +125,10 @@ Card assignCard(char *lineFromFile) {
         case 'S':
             card.suit = Spades;
             break;
+        default:
+            card.suit = (CardValue) NULL;
+            return card;
+            
     }
     return card;
 }
