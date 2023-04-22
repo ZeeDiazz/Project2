@@ -1,3 +1,5 @@
 #include "card.h"
 
-Deck loadDeck(char* filename);
+Card assignCard(char *lineFromFile);
+
+int readFromFile(char *filename);
