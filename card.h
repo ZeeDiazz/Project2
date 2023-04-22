@@ -1,8 +1,9 @@
 typedef enum {
     Clubs = 1,
+    Hearts,
     Diamonds,
     Spades,
-    Hearts,
+    
 } CardSuit;
 
 typedef enum {
