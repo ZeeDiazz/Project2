@@ -1,27 +1,24 @@
+#pragma once
 #include <stdbool.h>
 #include <stdlib.h>
 #include "linkedList.h"
 
-struct Node* head = NULL;
+struct Node *header = NULL, *current = NULL;
 
-void add(int a){
-
+void addCard(Node* node,Card card){
 }
-void addFirst(int a){
-
+void addFirst(Card card){
     //allocate memory
-
-
 }
 
-void addLast(int a){}
+void addLast(Card card){}
 
-void delete(int a){
+void remove(Card card){
     //Use free to  remove from memory
 
 }
 
 bool isEmpty(){
-    return head == NULL;
+    return header == NULL; //returns true if the empty
 }
 
