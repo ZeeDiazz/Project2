@@ -1,10 +1,13 @@
+#pragma once
+#include "card.h"
 
-typedef struct node0 {
-    int value;
-    struct node0 * next;
+typedef struct {
+    Card card;
+    struct Node * next;
 } Node;
-void add(int a);
-void addFirst(int a);
-void addLast(int a);
-void delete(int a);
+
+void addCard(Node* node,Card card);
+void addFirst(Card card);
+void addLast(Card card);
+void remove(Card card);
 bool isEmpty();
