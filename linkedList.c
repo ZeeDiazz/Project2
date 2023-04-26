@@ -3,13 +3,19 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-struct Node *header = NULL, *current = NULL;
 
-void addCard(Node* node,Card card){
+
+void addCard(Node* node, Card card){
+    Node* testNode = malloc(sizeof(Node));
+    testNode->card = card;
+    node->next = testNode;
 }
 void addFirst(Card card){
     //allocate memory
+    Node* testNode = malloc(sizeof(Node));
+    testNode->card = card;
 }
+
 
 void addLast(Card card){}
 
@@ -18,7 +24,6 @@ void remove(Card card){
 
 }
 
-bool isEmpty(){
-    return header == NULL; //returns true if the empty
+bool isEmpty(Node* node) {
+    return node == NULL;
 }
-
