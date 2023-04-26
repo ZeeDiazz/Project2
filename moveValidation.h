@@ -1,4 +1,5 @@
-#include "stdbool.h"
+#pragma once
+#include <stdbool.h>
 #include "card.h"
 
 bool canMoveToColumn(Card moving, Card movingTo);

@@ -1,66 +1,82 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "readFile.h"
+#include <stdbool.h>
 
+#define BUFFER_SIZE 128
 
-int readFromFile(char *filename) {
-    const int bufferSize = 128;
+FileAssessment readFromFile(char *filename) {
 
-    // Doesn't work with filename alone. Insert absolute path
-    FILE *pFile = fopen("cards.txt", "r");
-    char line[bufferSize];
+    FileAssessment assessment;
+
+    FILE *pFile = fopen(filename, "r");
+    char line[BUFFER_SIZE];
 
     // Fails if provided with the wrong filename
     if (pFile == NULL) {
-        return -53;
+        assessment.statusCode = FILENOTFOUND;
+        assessment.errorMessage = "Wrong filepath/Couldn't load the file with the give filename";
+        return assessment;
     }
 
 
     Card currentCard;
     Card cards[52]; // Deck that will be made
-    int checkCards[4][13] = {{0}}; // For checking if deck contains all cards
-    int i = 0;
-    while (fgets(line, bufferSize, pFile) != NULL && i < 52) {
+    bool checkCards[4][13] = {{0}}; // For checking if deck contains all cards
+    int cardCounter = 0;
+    while (fgets(line, BUFFER_SIZE, pFile) != NULL && cardCounter < 52) {
         currentCard = assignCard(line);
         if (currentCard.value == NULL || currentCard.suit == NULL) {
-            return -i - 1;
+
+            // StatusCode
+            char errorLine[BUFFER_SIZE];
+
+            sprintf(errorLine, "There was a card with the wrong card format on line %d", cardCounter + 1);
+
+            assessment.statusCode = WRONGCARDFORMAT;
+            assessment.errorMessage = errorLine;
+            fclose(pFile);
+            return assessment;
+        } else if (checkCards[currentCard.suit - 1][currentCard.value - 1]) {
+            // StatusCode
+            char errorLine[BUFFER_SIZE];
+
+            sprintf(errorLine, "There was a duplicate card on line %d", cardCounter + 1);
+
+            assessment.statusCode = DUPLICATE;
+            assessment.errorMessage = errorLine;
+            fclose(pFile);
+            return assessment;
         }
-        cards[i] = currentCard;
-        i++;
-        checkCards[currentCard.suit - 1][currentCard.value - 1] = 1;
+        cards[cardCounter] = currentCard;
+        cardCounter++;
+        checkCards[currentCard.suit - 1][currentCard.value - 1] = true;
     }
     fclose(pFile);
 
+    if (cardCounter != 52) {
+        // StatusCode
+        char errorLine[BUFFER_SIZE];
 
-    // Checking if deck contains all the cards
-    for (int j = 0; j < 4; ++j) {
-        for (int k = 0; k < 13; ++k) {
-            if (checkCards[j][k] != 1) {
-                return -54;
-            }
-        }
+        sprintf(errorLine,
+                "There was not enough cards to make a full deck with the given file. The last read line is line %d",
+                cardCounter + 1);
+
+        assessment.statusCode = MISSINGCARDS;
+        assessment.errorMessage = errorLine;
+        assessment.deck = makeDeck();
+
+        return assessment;
     }
 
-    Deck *deck1 = {cards};
 
-    return 1;
+    assessment.statusCode = SUCCESS;
+    assessment.errorMessage = "OK";
+    Deck *deck = {cards};
+    assessment.deck = *deck;
+
+    return assessment;
 }
-
-// EXIT CODES ------------------------------------------------------------------------------------------
-// 1 = A full deck can be made by reading from the file
-
-// -52 < exit code < 0 = Represents the line number (absolute value) at which there was an error
-// Will produce this exit code if the first to characters on a line aren't a correct card representation
-// Will still work if there is written something after the first two characters on a line
-
-// -53 = Wrong filepath/Couldn't load the filename
-
-// -54 The deck contains duplicates or are missing some cards 
-// It could also mean that the first 52 lines didn't contain the card information in the correct format
-// The two first characters on a line should represent only one card with the correct representation
-// All other formats will produce this exit code
-
-
 
 
 Card assignCard(char *lineFromFile) {
@@ -128,15 +144,7 @@ Card assignCard(char *lineFromFile) {
         default:
             card.suit = (CardValue) NULL;
             return card;
-            
+
     }
     return card;
 }
-
-
-
-
-
-
-
-
