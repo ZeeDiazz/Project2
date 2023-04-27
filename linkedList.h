@@ -7,7 +7,7 @@ typedef struct {
 } Node;
 
 void addCard(Node* node,Card card);
-void addFirst(Card card);
-void addLast(Card card);
-void remove(Card card);
+void addFirst(Node* node, Card card);
+void addLast(Node* node, Card card);
+void remove(Node* node, Card card);
 bool isEmpty();

@@ -10,18 +10,30 @@ void addCard(Node* node, Card card){
     testNode->card = card;
     node->next = testNode;
 }
-void addFirst(Card card){
+void addFirst(Node* node, Card card){
     //allocate memory
     Node* testNode = malloc(sizeof(Node));
     testNode->card = card;
+    testNode->next = node->next;
+    node->next = testNode;
 }
 
+void addLast(Node* node, Card card){
+    Node* testNode = malloc(sizeof(Node));
+    testNode->card = card;
 
-void addLast(Card card){}
+    while (node->next != NULL){
+        node->next = testNode;
+    }
+}
 
-void remove(Card card){
-    //Use free to  remove from memory
+void remove(Node* node, Card card){
 
+}
+
+void printList(Node* node){
+    //while (node){
+    //}
 }
 
 bool isEmpty(Node* node) {
