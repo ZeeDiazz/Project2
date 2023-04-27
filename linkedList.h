@@ -11,9 +11,14 @@ typedef struct {
     int size;
 }LinkedList;
 
-void addCard(Node* node,Card card);
-void addFirst(Node* node, Card card);
-void addLast(Node* node, Card card);
-void remove(Node* node, Card card);
-void printList(Node* node);
-bool isEmpty();
+LinkedList* makeEmptyList();
+void addCard(LinkedList* list,Card card);
+void addFirst(LinkedList* list, Card card);
+void addLast(LinkedList* list, Card card);
+
+void remove(LinkedList* list, Card card);
+
+Card getCardAt(LinkedList* list, int index);
+void printList(LinkedList* list);
+
+bool isEmpty(LinkedList* list);
