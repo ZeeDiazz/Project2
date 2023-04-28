@@ -20,20 +20,6 @@ void addCard(LinkedList* list, Card card){
     Node* node = malloc(sizeof(Node));
     node->card = card;
 
-    list->head = node;
-    list->size++;
-}
-/**
- * @author ZedDiazz (Zaid)
- * @param list
- * @param card
- */
-
-void addFirst(LinkedList* list, Card card){
-    //allocate memory
-    Node* node = malloc(sizeof(Node));
-    node->card = card;
-
     node->next = list->head->next;
 
     list->head = node;
