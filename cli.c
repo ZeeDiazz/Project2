@@ -20,22 +20,8 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     int columnsLength = rows * (columnWidth + 1);
     int foundationsLength = 4 * (2 + foundationWidth);
 
-    char* commandString;
-    char* message;
-
-    if (previousCommand.name == NONE) {
-        commandString = "";
-        message = "";
-    }
-    else {
-        commandString = commandToString(previousCommand);
-        if (previousCommand.name == INVALID) {
-            message = previousCommand.arguments;
-        }
-        else {
-            message = "OK";
-        }
-    }
+    // If the command was invalid, output the reason, otherwise output ok
+    char* message = (previousCommand.name == INVALID) ? previousCommand.arguments : "OK";
 
     int commandLength = strlen(commandText) + strlen(lastInput) + 1;
     int messageLength = strlen(messageText) + strlen(message) + 1;
