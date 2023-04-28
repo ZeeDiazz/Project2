@@ -5,4 +5,4 @@
 #include "linkedList.h"
 #include "commands.h"
 
-void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand);
+void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput);

@@ -10,7 +10,7 @@ char* inputText = "INPUT >";
 
 int columnWidth = 2 * 7 + 6;
 int foundationWidth = 2 + 1 + 2;
-void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand) {
+void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput) {
     int rows = 7; // minimum 7
     for (int i = 0; i < 7; i++) {
         if (columns[i]->size > rows) {
@@ -37,13 +37,13 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
         }
     }
 
-    int commandLength = strlen(commandText) + strlen(commandString) + 1;
+    int commandLength = strlen(commandText) + strlen(lastInput) + 1;
     int messageLength = strlen(messageText) + strlen(message) + 1;
     int inputLength = strlen(inputText) + 1;
 
     int totalLength = strlen(top) + columnsLength + foundationsLength + 1 + commandLength + messageLength + inputLength;
 
-    char* board = malloc(totalLength);
+    char* board = malloc(totalLength * sizeof(char));
 
     int index = 0;
     for (int i = 0; i < strlen(top); i++) {
@@ -94,8 +94,8 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     for (int i = 0; i < strlen(commandText); i++) {
         board[index++] = commandText[i];
     }
-    for (int i = 0; i < strlen(commandString); i++) {
-        board[index++] = commandString[i];
+    for (int i = 0; i < strlen(lastInput); i++) {
+        board[index++] = lastInput[i];
     }
     board[index++] = '\n';
     for (int i = 0; i < strlen(messageText); i++) {
