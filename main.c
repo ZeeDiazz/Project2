@@ -22,7 +22,7 @@ int main() {
         foundations[i] = makeEmptyList();
     }
 
-    Command lastCommand = {UNKNOWN, true, true, ""};
+    Command lastCommand = {UNKNOWN, false, true, ""};
 
     char* userInput = NULL;
     while (game.phase != QUITTING) {
