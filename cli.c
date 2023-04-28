@@ -3,7 +3,7 @@
 #include "cli.h"
 #include "commands.h"
 
-#define MAX_INPUT_LENGTH 5
+#define MAX_INPUT_LENGTH 100 + 1
 
 char* top = "C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n";
 char* commandText = "LAST Command:";
@@ -22,8 +22,25 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     int columnsLength = rows * (columnWidth + 1);
     int foundationsLength = 4 * (2 + foundationWidth);
 
-    // If the command was invalid, output the reason, otherwise output ok
-    char* message = (previousCommand.name == INVALID) ? previousCommand.arguments : "OK";
+    // If the command was invalid or unknown, output the reason, otherwise output ok
+    char* message;
+    switch (previousCommand.name)
+    {
+        case INVALID:
+        case UNKNOWN:
+            message = previousCommand.arguments;
+            break;
+        default:
+            message = "OK";
+            break;
+    }
+
+    if (lastInput == NULL) {
+        lastInput = "";
+    }
+    else if (previousCommand.name == UNKNOWN) {
+        lastInput = "???";
+    }
 
     int commandLength = strlen(commandText) + strlen(lastInput) + 1;
     int messageLength = strlen(messageText) + strlen(message) + 1;
