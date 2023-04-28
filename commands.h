@@ -2,8 +2,7 @@
 #include "stdbool.h"
 
 typedef enum CommandName {
-    UNKNOWN = -1,
-    INVALID = 0,
+    UNKNOWN = 0,
     LD = 1,
     SW,
     SI,
@@ -17,6 +16,7 @@ typedef enum CommandName {
 
 typedef struct Command {
     CommandName name;
+    bool isValid;
     bool hasArguments;
     char* arguments;
 } Command;

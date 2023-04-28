@@ -1,9 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "commands.h"
 
+#define COMMAND_COUNT 8
 
-const int COMMAND_COUNT = 8;
 bool commandCanTakeArguments(CommandName name) {
     return (name == LD || name == SI || name == SD);
 }
@@ -34,7 +35,7 @@ Command parseCommand(char* commandString) {
     if (commandName == -1) {
         if (inputLength != 6 && inputLength != 9) {
             // Cannot be a move
-            Command unknown = {UNKNOWN, true, "Unknown command"};
+            Command unknown = {UNKNOWN, false, true, "Unknown command"};
             return unknown;
         }
         return makeGameMoveCommand(commandString);
@@ -59,14 +60,16 @@ Command parseCommand(char* commandString) {
         }
     }
 
-    Command command = {commandName, hasArguments, arguments};
+    Command command = {commandName, true, hasArguments, arguments};
     return command;
 }
 
+
+#define INVALID_COLUMN "Invalid column"
+#define INVALID_FOUNDATION "Invalid foundation"
+#define MALFORMED_MOVE_COMMAND "Malformed command (has to be \"to->from\")"
 Command makeGameMoveCommand(char* potentialMove) {
-    Command invalidColumn = {INVALID, true, "Invalid column"};
-    Command invalidFoundation = {INVALID, true, "Invalid foundation"};
-    Command malformedCommand = {INVALID, true, "Malformed command (has to be \"to->from\")"};
+    Command command = {MOVE, true, true, ""};
 
     int expectedArrowIndex;
     // Check if the move is from a column
@@ -74,7 +77,9 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '7' > 0);
         if (tooLow || tooHigh) {
-            return invalidColumn;
+            command.isValid = false;
+            command.arguments = INVALID_COLUMN;
+            return command;
         }
 
         if (potentialMove[2] == ':') {
@@ -82,18 +87,24 @@ Command makeGameMoveCommand(char* potentialMove) {
                 tooLow = (potentialMove[1] - '1' < 0);
                 tooHigh = (potentialMove[1] - '7' > 0);
                 if (tooLow || tooHigh) {
-                    return invalidColumn;
+                    command.isValid = false;
+                    command.arguments = INVALID_COLUMN;
+                    return command;
                 }
             }
             else if (potentialMove[3] == 'F') {
                 tooLow = (potentialMove[1] - '1' < 0);
                 tooHigh = (potentialMove[1] - '4' > 0);
                 if (tooLow || tooHigh) {
-                    return invalidFoundation;
+                    command.isValid = false;
+                    command.arguments = INVALID_FOUNDATION;
+                    return command;
                 }
             }
             else {
-                return malformedCommand;
+                command.isValid = false;
+                command.arguments = MALFORMED_MOVE_COMMAND;
+                return command;
             }
 
             expectedArrowIndex = 5;
@@ -107,82 +118,77 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '4' > 0);
         if (tooLow || tooHigh) {
-            return invalidColumn;
+            command.isValid = false;
+            command.arguments = INVALID_COLUMN;
+            return command;
         }
         expectedArrowIndex = 3;
     }
     // If it's not a column or a foundation
     else {
-        return malformedCommand;
+        command.isValid = false;
+        command.arguments = MALFORMED_MOVE_COMMAND;
+        return command;
     }
 
     // Check if the arrow is at the expected location
     if (potentialMove[expectedArrowIndex] != '-' || potentialMove[expectedArrowIndex + 1] != '>') {
-        return malformedCommand;
+        command.isValid = false;
+        command.arguments = MALFORMED_MOVE_COMMAND;
+        return command;
     }
 
     if (potentialMove[3] == 'C') {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '7' > 0);
         if (tooLow || tooHigh) {
-            return invalidColumn;
+            command.isValid = false;
+            command.arguments = INVALID_COLUMN;
+            return command;
         }
     }
     else if (potentialMove[3] == 'F') {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '4' > 0);
         if (tooLow || tooHigh) {
-            return invalidFoundation;
+            command.isValid = false;
+            command.arguments = INVALID_FOUNDATION;
+            return command;
         }
     }
     else {
-        return malformedCommand;
+        command.isValid = false;
+        command.arguments = MALFORMED_MOVE_COMMAND;
+        return command;
     }
     
-    Command moveCommand = {MOVE, true, potentialMove};
-    return moveCommand;
+    command.arguments = potentialMove;
+    return command;
 }
 
 char* commandToString(Command command) {
     if (command.name == MOVE) {
         return command.arguments;
     }
-    if (command.name == INVALID) {
-        char* errorPrefix = "[ERROR]";
-        char* stringRepresentation = malloc(strlen(errorPrefix) + 1 + strlen(command.arguments));
-        int currentIndex = 0;
-
-        for (int i = 0; i < strlen(errorPrefix); i++) {
-            stringRepresentation[currentIndex] = errorPrefix[i];
-            currentIndex++;
-        }
-        stringRepresentation[currentIndex] = ' ';
-        currentIndex++;
-        for (int i = 0; i < strlen(command.arguments); i++) {
-            stringRepresentation[currentIndex] = command.arguments[i];
-            currentIndex++;
-        }
-        
-        return stringRepresentation;
-    }
 
     if (command.name > COMMAND_COUNT) {
         return "";
     }
 
-    char* commandStrings[COMMAND_COUNT];
-    commandStrings[0] = "LD";
-    commandStrings[1] = "SW";
-    commandStrings[2] = "SI";
-    commandStrings[3] = "SR";
-    commandStrings[4] = "SD";
-    commandStrings[5] = "QQ";
-    commandStrings[6] = "P";
-    commandStrings[7] = "Q";
+    char* commandStrings[COMMAND_COUNT + 1];
+    commandStrings[0] = "???";
+    commandStrings[1] = "LD";
+    commandStrings[2] = "SW";
+    commandStrings[3] = "SI";
+    commandStrings[4] = "SR";
+    commandStrings[5] = "SD";
+    commandStrings[6] = "QQ";
+    commandStrings[7] = "P";
+    commandStrings[8] = "Q";
 
-    char* commandName = commandStrings[command.name - 1];
+    char* commandName = commandStrings[command.name];
     char* stringRepresentation;
-    int stringLength = strlen(commandName);
+    int stringLength = strlen(commandName) + 1;
 
     if (command.hasArguments) {
         stringLength += 1 + strlen(command.arguments);
@@ -203,5 +209,6 @@ char* commandToString(Command command) {
             currentIndex++;
         }    
     }
+    stringRepresentation[stringLength - 1] = '\0';
     return stringRepresentation;
 }
