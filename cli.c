@@ -26,7 +26,7 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     char* message = (!previousCommand.isValid) ? previousCommand.arguments : "OK";
     char* lastCommand = (lastInput == NULL) ? "" : commandToString(previousCommand);
 
-    int commandLength = strlen(commandText) + strlen(lastInput) + 1;
+    int commandLength = strlen(commandText) + strlen(lastCommand) + 1;
     int messageLength = strlen(messageText) + strlen(message) + 1;
     int inputLength = strlen(inputText) + 1;
 
@@ -83,8 +83,8 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     for (int i = 0; i < strlen(commandText); i++) {
         board[index++] = commandText[i];
     }
-    for (int i = 0; i < strlen(lastInput); i++) {
-        board[index++] = lastInput[i];
+    for (int i = 0; i < strlen(lastCommand); i++) {
+        board[index++] = lastCommand[i];
     }
     board[index++] = '\n';
     for (int i = 0; i < strlen(messageText); i++) {
