@@ -69,6 +69,29 @@ bool removeCard(LinkedList* list, Card card) {
     }
     return false;
 }
+/**
+ * it splits a list into two, and returns the new splited list
+ * @author ZeeDiazz (Zaid)
+ * @param list
+ * @param index
+ * @return
+ */
+LinkedList* splitList(LinkedList* list, int index){
+    if (index < 0 || index > list->size-1) {
+        return list;
+    }
+
+    //iterate through the list to the given index
+    Node* temp = list->head;
+    for(int i = 0; i <= index; i++) {
+        temp = temp->next;
+    }
+
+    //Set the next list to temp
+    //return the splitedlist
+
+    return temp; //return temp is temporary
+}
 
 /**
  * This method is to get a specific card from the list, and checks if he index is correct
