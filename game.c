@@ -3,7 +3,7 @@
 #include "moveValidation.h"
 
 bool canUseCommand(Game game, Command command) {
-    if (command.name == QQ || command.name == INVALID || command.name == UNKNOWN) {
+    if (command.name == QQ || !command.isValid) {
         return true;
     }
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "card.h"
 #include "cli.h"
 #include "commands.h"
@@ -21,16 +22,10 @@ int main() {
         foundations[i] = makeEmptyList();
     }
 
-    Command lastCommand = {INVALID, true, ""};
+    Command lastCommand = {UNKNOWN, true, true, ""};
 
     char* userInput = NULL;
     while (game.phase != QUITTING) {
-        if (userInput == NULL) {
-            printf("Input is null\n");
-        }
-        else {
-            printf("%d\n", strlen(userInput));
-        }
         printBoard(columns, foundations, lastCommand, userInput);
 
         if (userInput != NULL) {
@@ -38,18 +33,17 @@ int main() {
         }
         userInput = getUserInput();
         if (userInput == NULL) {
-            printf("Ooga booga\n");
             continue;
         }
         // TODO make parse better (take the current phase?)
         lastCommand = parseCommand(userInput);
         if (!canUseCommand(game, lastCommand)) {
-            lastCommand.name = INVALID;
+            lastCommand.isValid = false;
             lastCommand.hasArguments = true;
             lastCommand.arguments = "Cannot use this command at this time";
         }
         // If the command was invalid, don't bother the actual game state
-        if (lastCommand.name == INVALID || lastCommand.name == UNKNOWN) {
+        if (!lastCommand.isValid) {
             continue;
         }
 
