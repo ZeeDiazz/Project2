@@ -2,7 +2,7 @@
 #include "stdbool.h"
 
 typedef enum CommandName {
-    NONE = -1,
+    UNKNOWN = -1,
     INVALID = 0,
     LD = 1,
     SW,

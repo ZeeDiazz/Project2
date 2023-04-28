@@ -19,10 +19,12 @@ Command parseCommand(char* commandString) {
     commandStrings[6] = "P";
     commandStrings[7] = "Q";
 
+    int inputLength = strlen(commandString);
     CommandName commandName = -1;
     for (int i = 0; i < COMMAND_COUNT; i++) {
         char* checkingName = commandStrings[i];
-        if (strncmp(commandString, checkingName, strlen(checkingName)) == 0) {
+        int checkingLength = strlen(checkingName);
+        if (inputLength == checkingLength && strncmp(commandString, checkingName, checkingLength) == 0) {
             commandName = i + 1;
             break;
         }
@@ -30,7 +32,11 @@ Command parseCommand(char* commandString) {
 
     // Check if it's a move command
     if (commandName == -1) {
-        // TODO check?
+        if (inputLength != 6 && inputLength != 9) {
+            // Cannot be a move
+            Command unknown = {UNKNOWN, true, "Unknown command"};
+            return unknown;
+        }
         return makeGameMoveCommand(commandString);
     }
 
