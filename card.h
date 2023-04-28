@@ -1,7 +1,7 @@
-
+#pragma once
 // @author Zigalow
 
-typedef enum {
+typedef enum CardSuit {
     Clubs = 1,
     Hearts,
     Diamonds,
@@ -9,7 +9,7 @@ typedef enum {
     
 } CardSuit;
 
-typedef enum {
+typedef enum CardValue {
     Ace = 1,
     Two,
     Three,
@@ -25,7 +25,7 @@ typedef enum {
     King,
 } CardValue;
 
-typedef struct {
+typedef struct Card {
     CardSuit suit;
     CardValue value;
 } Card;
@@ -45,6 +45,4 @@ typedef struct {
  */
 Deck makeDeck();
 
-
-
-
+char* cardToString(Card card);

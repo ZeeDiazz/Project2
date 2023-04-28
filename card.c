@@ -22,3 +22,18 @@ Deck makeDeck() {
     return *deck;
 }
 
+char* cardToString(Card card) {
+    char charSuits[4] = "CDHS";
+    char charValues[13] = "A23456789TJQK";
+
+    if (card.suit < 1 || card.suit > 4 || card.value < 1 || card.value > 13) {
+        return "";
+    }
+
+    char* string = malloc(sizeof(char) * 3);
+    string[0] = charValues[card.value - 1];
+    string[1] = charSuits[card.suit - 1];
+    string[2] = '\0';
+    return string;
+}
+
