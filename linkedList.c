@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-
+/**
+ * This function creates a empty list
+ * @author ZeeDiazz (Zaid)
+ * @return
+ */
 LinkedList* makeEmptyList(){
     LinkedList* list = malloc(sizeof(LinkedList));
     list->head = NULL;
@@ -11,60 +15,81 @@ LinkedList* makeEmptyList(){
 }
 
 /**
- * This function add a card at the beginning of the list.
- * @author ZedDiazz (Zaid)
+ * This function adds a card at end of the list.
+ * @author ZeeDiazz (Zaid)
  * @param list
  * @param card
  */
-void addCard(LinkedList* list, Card card){
+void addCard(LinkedList* list, Card card) {
     Node* node = malloc(sizeof(Node));
     node->card = card;
+    node->next = NULL; //Null since it's the last element
 
-    node->next = list->head->next;
+    if (list->size == 0) {
+        list->head = node;
+        list->size++;
+        return;
+    }
 
-    list->head = node;
+    Node* current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node; //update the last element in the list
     list->size++;
 }
 
-void addLast(LinkedList* list, Card card){
-    Node* node = malloc(sizeof(Node));
-    node->card = card;
-    node->next = NULL; //Null since its the last element
-
-    while (list->head != NULL){
-        list->head = node;
-    }
-}
-
-
-void removeCard(LinkedList* list, Card card) {
+/**
+ * This method can remove a card from the list, by using the free.
+ * Checks for the edge cases.
+ * @author ZeeDiazz (Zaid)
+ * @param list
+ * @param card
+ */
+bool removeCard(LinkedList* list, Card card) {
     Node *temp = list->head;
     Node *prev = NULL;
 
     while (temp != NULL) {
+        // if cards are the same
         if (temp->card.value == card.value && temp->card.suit == card.suit) {
-            list->head->next = temp->next;
+            list->size--;
+            // if it is the head
+            if (prev == NULL) {
+                list->head = list->head->next;
+            }
+            else {
+                prev->next = temp->next;
+            }
             free(temp);
-            list->size--; //since we are removing
-            return; // to stop the while loop
+            return true; // to stop the while loop
         }
-        prev->card = temp->card;
-        temp = temp->next; //iterate through temp
+        prev = temp;
+        temp = temp->next; //iterate through the list
     }
+    return false;
 }
 
+/**
+ * This method is to get a specific card from the list, and checks if he index is correct
+ * @author ZeeDiazz (Zaid)
+ * @param list
+ * @param index
+ * @return
+ */
 Card getCardAt(LinkedList* list, int index){
-    //a for loop
-    for(int i = 0; i < index;i++){
-
+    if (index <= 0) {
+        return list->head->card;
+    } else if (index >= list->size) {
+        index = list->size-1;
     }
+
+    //a for loop
+    Node *node = list->head;
+    for (int i = 0; i < index; i++) {
+        node = node->next;
+    }
+    return node->card;
 }
 
-void printList(LinkedList* list){
-    //while (node){
-    //}
-}
 
-bool isEmpty(LinkedList* list) {
-    return list->head == NULL;
-}
