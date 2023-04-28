@@ -23,4 +23,6 @@ LinkedList* makeEmptyList();
 void addCard(LinkedList* list,Card card);
 bool removeCard(LinkedList* list, Card card);
 
+LinkedList* splitList(LinkedList* list, int index);
+
 Card getCardAt(LinkedList* list, int index);
