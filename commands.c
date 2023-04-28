@@ -25,7 +25,7 @@ Command parseCommand(char* commandString) {
     for (int i = 0; i < COMMAND_COUNT; i++) {
         char* checkingName = commandStrings[i];
         int checkingLength = strlen(checkingName);
-        if (inputLength == checkingLength && strncmp(commandString, checkingName, checkingLength) == 0) {
+        if (strncmp(commandString, checkingName, checkingLength) == 0 && (commandCanTakeArguments(i+1) || inputLength == checkingLength)) {
             commandName = i + 1;
             break;
         }
@@ -190,10 +190,10 @@ char* commandToString(Command command) {
     char* stringRepresentation;
     int stringLength = strlen(commandName) + 1;
 
-    if (command.hasArguments) {
+    if (command.hasArguments && command.isValid) {
         stringLength += 1 + strlen(command.arguments);
     }
-    stringRepresentation = malloc(stringLength);
+    stringRepresentation = malloc(stringLength + 1);
 
     int currentIndex = 0;
     for (int i = 0; i < strlen(commandName); i++) {
@@ -209,6 +209,6 @@ char* commandToString(Command command) {
             currentIndex++;
         }    
     }
-    stringRepresentation[stringLength - 1] = '\0';
+    stringRepresentation[stringLength] = '\0';
     return stringRepresentation;
 }
