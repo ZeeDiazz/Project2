@@ -10,11 +10,11 @@ char* inputText = "INPUT >";
 
 int columnWidth = 2 * 7 + 6;
 int foundationWidth = 2 + 1 + 2;
-void printBoard(CardList** columns, CardList** foundations, Command previousCommand) {
+void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand) {
     int rows = 7; // minimum 7
     for (int i = 0; i < 7; i++) {
-        if (columns[i]->length > rows) {
-            rows = columns[i]->length;
+        if (columns[i]->size > rows) {
+            rows = columns[i]->size;
         }
     }
     int columnsLength = rows * (columnWidth + 1);
@@ -51,11 +51,12 @@ void printBoard(CardList** columns, CardList** foundations, Command previousComm
     }
     for (int row = 0; row < rows; row++) {
         for (int column = 0; column < 7; column++) {
-            CardList* currentList = columns[column];
+            LinkedList* currentList = columns[column];
             char* cardString;
-            if (row < currentList->length) {
-                Card card = getAt(currentList, row);
-                cardString = (card.seen) ? cardToString(getAt(currentList, row)) : "[]";
+            if (row < currentList->size) {
+                Card card = getCardAt(currentList, row);
+                // TODO check if card has been seen
+                cardString = (false) ? cardToString(getAt(currentList, row)) : "[]";
             }
             else {
                 // Empty card
@@ -72,13 +73,13 @@ void printBoard(CardList** columns, CardList** foundations, Command previousComm
             board[index++] = '\t';
             board[index++] = '\t';
             int foundationIndex = row / 2;
-            CardList* foundation = foundations[foundationIndex];
-            if (foundation->length == 0) {
+            LinkedList* foundation = foundations[foundationIndex];
+            if (foundation->size == 0) {
                 board[index++] = '[';
                 board[index++] = ']';
             }
             else {
-                Card topCard = getAt(foundation, foundation->length - 1);
+                Card topCard = getCardAt(foundation, foundation->size - 1);
                 char* topCardString = cardToString(topCard);
                 board[index++] = topCardString[0];
                 board[index++] = topCardString[1];
