@@ -1,6 +1,11 @@
+// @author Zigalow
+
 #include <stdio.h>
 #include "card.h"
-
+/**
+ * 
+ * @return Returns unshuffled deck
+ */
 Deck makeDeck() {
     Card cards[52];
     int currentIndex = 0;
