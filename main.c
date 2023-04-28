@@ -9,10 +9,28 @@
 #include "readFile.h"
 #include "shuffleDeck.h"
 
+#define MAX_INPUT_LENGTH 256
+
 int main() {
     Game game = {STARTUP, 0, 0, NULL};
+    LinkedList** columns = malloc(7 * sizeof(LinkedList*));
+    for (int i = 0; i < 7; i++) {
+        columns[i] = makeEmptyList();
+    }
+
+    LinkedList** foundations = malloc(4 * sizeof(LinkedList*));
+    for (int i = 0; i < 4; i++) {
+        foundations[i] = makeEmptyList();
+    }
+
+    Command lastCommand = {NONE, false, ""};
+    char inputBuffer[MAX_INPUT_LENGTH];
+
     Command quitCommand = {QQ, false, ""};
     while (game.phase != QUITTING) {
+        fgets(inputBuffer, MAX_INPUT_LENGTH, stdin);
+        lastCommand = parseCommand(inputBuffer);
+        printBoard(columns, foundations, lastCommand, inputBuffer);
         useCommand(&game, quitCommand);
     }
     printf("Hello, World!\n");
