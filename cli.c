@@ -23,23 +23,10 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     int foundationsLength = 4 * (2 + foundationWidth);
 
     // If the command was invalid or unknown, output the reason, otherwise output ok
-    char* message;
-    switch (previousCommand.name)
-    {
-        case INVALID:
-        case UNKNOWN:
-            message = previousCommand.arguments;
-            break;
-        default:
-            message = "OK";
-            break;
-    }
+    char* message = (!previousCommand.isValid) ? previousCommand.arguments : "OK";
 
     if (lastInput == NULL) {
         lastInput = "";
-    }
-    else if (previousCommand.name == UNKNOWN) {
-        lastInput = "???";
     }
 
     int commandLength = strlen(commandText) + strlen(lastInput) + 1;
