@@ -3,13 +3,13 @@
 #include "commands.h"
 
 
-const int commandCount = 8;
+const int COMMAND_COUNT = 8;
 bool commandCanTakeArguments(CommandName name) {
     return (name == LD || name == SI || name == SD);
 }
 
 Command parseCommand(char* commandString) {
-    char* commandStrings[commandCount];
+    char* commandStrings[COMMAND_COUNT];
     commandStrings[0] = "LD";
     commandStrings[1] = "SW";
     commandStrings[2] = "SI";
@@ -20,7 +20,7 @@ Command parseCommand(char* commandString) {
     commandStrings[7] = "Q";
 
     CommandName commandName = -1;
-    for (int i = 0; i < commandCount; i++) {
+    for (int i = 0; i < COMMAND_COUNT; i++) {
         char* checkingName = commandStrings[i];
         if (strncmp(commandString, checkingName, strlen(checkingName)) == 0) {
             commandName = i + 1;
@@ -160,11 +160,11 @@ char* commandToString(Command command) {
         return stringRepresentation;
     }
 
-    if (command.name > commandCount) {
+    if (command.name > COMMAND_COUNT) {
         return "";
     }
 
-    char* commandStrings[commandCount];
+    char* commandStrings[COMMAND_COUNT];
     commandStrings[0] = "LD";
     commandStrings[1] = "SW";
     commandStrings[2] = "SI";
