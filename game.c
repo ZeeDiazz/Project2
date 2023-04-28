@@ -1,7 +1,7 @@
 #include "game.h"
 
 bool canUseCommand(Game game, Command command) {
-    if (command.name == QQ) {
+    if (command.name == QQ || command.name == INVALID) {
         return true;
     }
 
