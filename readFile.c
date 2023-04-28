@@ -1,10 +1,17 @@
+// @author Zigalow
+
 #include <stdio.h>
 #include <ctype.h>
 #include "readFile.h"
 #include <stdbool.h>
 
 #define BUFFER_SIZE 128
-
+/**
+ * 
+ * @param filename Filename of the file containing the cards that needs to be read
+ * @return Returns FileAssessment, which is determined by different factors when reading from file
+ */
+ 
 FileAssessment readFromFile(char *filename) {
 
     FileAssessment assessment;
@@ -12,7 +19,7 @@ FileAssessment readFromFile(char *filename) {
     FILE *pFile = fopen(filename, "r");
     char line[BUFFER_SIZE];
 
-    // Fails if provided with the wrong filename
+    // If provided with the wrong filename
     if (pFile == NULL) {
         assessment.statusCode = FILENOTFOUND;
         assessment.errorMessage = "Wrong filepath/Couldn't load the file with the give filename";
@@ -22,13 +29,13 @@ FileAssessment readFromFile(char *filename) {
 
     Card currentCard;
     Card cards[52]; // Deck that will be made
-    bool checkCards[4][13] = {{0}}; // For checking if deck contains all cards
+    bool checkCards[4][13] = {{0}}; // Card-array for checking for duplicates
     int cardCounter = 0;
     while (fgets(line, BUFFER_SIZE, pFile) != NULL && cardCounter < 52) {
         currentCard = assignCard(line);
+        // If cards is in a wrong card format
         if (currentCard.value == NULL || currentCard.suit == NULL) {
-
-            // StatusCode
+            
             char errorLine[BUFFER_SIZE];
 
             sprintf(errorLine, "There was a card with the wrong card format on line %d", cardCounter + 1);
@@ -37,8 +44,10 @@ FileAssessment readFromFile(char *filename) {
             assessment.errorMessage = errorLine;
             fclose(pFile);
             return assessment;
+            
+            // If a cards has already been added to the cardArray : Duplicate
         } else if (checkCards[currentCard.suit - 1][currentCard.value - 1]) {
-            // StatusCode
+            
             char errorLine[BUFFER_SIZE];
 
             sprintf(errorLine, "There was a duplicate card on line %d", cardCounter + 1);
@@ -50,12 +59,14 @@ FileAssessment readFromFile(char *filename) {
         }
         cards[cardCounter] = currentCard;
         cardCounter++;
+        // Sets the checkCards array to true, according the currentCard in the checkArray 
         checkCards[currentCard.suit - 1][currentCard.value - 1] = true;
     }
     fclose(pFile);
 
+    // If there wasn't enough cards to make a full deck
     if (cardCounter != 52) {
-        // StatusCode
+        
         char errorLine[BUFFER_SIZE];
 
         sprintf(errorLine,
@@ -64,11 +75,11 @@ FileAssessment readFromFile(char *filename) {
 
         assessment.statusCode = MISSINGCARDS;
         assessment.errorMessage = errorLine;
-        assessment.deck = makeDeck();
 
         return assessment;
     }
 
+    // If everything goes well
 
     assessment.statusCode = SUCCESS;
     assessment.errorMessage = "OK";
@@ -78,7 +89,11 @@ FileAssessment readFromFile(char *filename) {
     return assessment;
 }
 
-
+/**
+ * 
+ * @param lineFromFile The line read, with information in regards to what value and suit the cards should hold
+ * @return Returns the assigned card
+ */
 Card assignCard(char *lineFromFile) {
 
     Card card;

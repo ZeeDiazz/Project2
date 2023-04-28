@@ -1,3 +1,6 @@
+
+// @author Zigalow
+
 typedef enum {
     Clubs = 1,
     Hearts,
@@ -27,11 +30,19 @@ typedef struct {
     CardValue value;
 } Card;
 
+
+/**
+ * struct named Deck that contains a card-array of 52 cards
+ */
 typedef struct {
     Card cards[52];
 } Deck;
 
 
+/**
+ * 
+ * @return Returns unshuffled deck 
+ */
 Deck makeDeck();
 
 
