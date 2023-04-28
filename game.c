@@ -46,7 +46,7 @@ void useCommand(Game* game, Command command) {
         case MOVE:
             game->totalMoves++;
             game->currentMove++;
-            addMove(game->moves, command.arguments);
+            // addMove(game->moves, command.arguments);
             break;
         case Q:
             game->phase = STARTUP;
