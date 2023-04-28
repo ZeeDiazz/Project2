@@ -1,8 +1,17 @@
 //
 // Created by zegho on 28-04-2023.
 //
+#pragma once
 
-#ifndef PROJECT2_MOVESTACK_H
-#define PROJECT2_MOVESTACK_H
 
-#endif //PROJECT2_MOVESTACK_H
+#include <stdbool.h>
+
+typedef struct MoveStack {
+    char* move;
+    struct MoveStack *next;
+} MoveStack;
+
+MoveStack* addMove(MoveStack* head, char* move);
+MoveStack* removeMove(MoveStack* head);
+char* getMove(MoveStack* head);
+bool isEmpty(MoveStack* head);
