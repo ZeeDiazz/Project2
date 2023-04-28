@@ -29,15 +29,21 @@ int main() {
     Command quitCommand = {QQ, false, ""};
     while (game.phase != QUITTING) {
         printBoard(columns, foundations, lastCommand, inputBuffer);
+        // TODO clean the input
         fgets(inputBuffer, MAX_INPUT_LENGTH, stdin);
+        // TODO make parse better (take the current phase?)
         lastCommand = parseCommand(inputBuffer);
         if (!canUseCommand(game, lastCommand)) {
             lastCommand.name = INVALID;
             lastCommand.hasArguments = true;
             lastCommand.arguments = "Cannot use this command at this time";
         }
-        printBoard(columns, foundations, lastCommand, inputBuffer);
-        useCommand(&game, lastCommand);
+        // If the command was invalid, don't bother the actual game state
+        if (lastCommand.name == INVALID) {
+            continue;
+        }
+
+        performCommand(&game, lastCommand, columns, foundations);
     }
     printf("Hello, World!\n");
     return 0;

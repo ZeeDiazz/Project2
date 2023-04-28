@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "moveStack.h"
 #include "commands.h"
+#include "linkedList.h"
 
 typedef enum GamePhase
 {
@@ -23,4 +24,4 @@ typedef struct Game
 
 
 bool canUseCommand(Game game, Command command);
-void useCommand(Game* game, Command command);
+void performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations);
