@@ -1,5 +1,7 @@
 #pragma once
+#include <stdbool.h>
 #include "card.h"
+
 /**
  * This is a Node, where  it points to the next node
  * @author ZeeDiazz (Zaid)
