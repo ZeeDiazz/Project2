@@ -23,11 +23,12 @@ int main() {
         foundations[i] = makeEmptyList();
     }
 
-    Command lastCommand = {NONE, false, ""};
+    Command lastCommand = {INVALID, false, ""};
     char inputBuffer[MAX_INPUT_LENGTH];
 
     Command quitCommand = {QQ, false, ""};
     while (game.phase != QUITTING) {
+        printBoard(columns, foundations, lastCommand, inputBuffer);
         fgets(inputBuffer, MAX_INPUT_LENGTH, stdin);
         lastCommand = parseCommand(inputBuffer);
         printBoard(columns, foundations, lastCommand, inputBuffer);
