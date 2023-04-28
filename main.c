@@ -23,7 +23,7 @@ int main() {
         foundations[i] = makeEmptyList();
     }
 
-    Command lastCommand = {INVALID, false, ""};
+    Command lastCommand = {INVALID, true, ""};
     char inputBuffer[MAX_INPUT_LENGTH];
 
     Command quitCommand = {QQ, false, ""};
@@ -31,8 +31,13 @@ int main() {
         printBoard(columns, foundations, lastCommand, inputBuffer);
         fgets(inputBuffer, MAX_INPUT_LENGTH, stdin);
         lastCommand = parseCommand(inputBuffer);
+        if (!canUseCommand(game, lastCommand)) {
+            lastCommand.name = INVALID;
+            lastCommand.hasArguments = true;
+            lastCommand.arguments = "Cannot use this command at this time";
+        }
         printBoard(columns, foundations, lastCommand, inputBuffer);
-        useCommand(&game, quitCommand);
+        useCommand(&game, lastCommand);
     }
     printf("Hello, World!\n");
     return 0;
