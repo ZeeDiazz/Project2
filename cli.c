@@ -3,6 +3,8 @@
 #include "cli.h"
 #include "commands.h"
 
+#define MAX_INPUT_LENGTH 5
+
 char* top = "C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n";
 char* commandText = "LAST Command:";
 char* messageText = "Message:";
@@ -97,4 +99,29 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     board[index++] = '\0';
     
     printf("%s", board);
+}
+
+char* getUserInput() {
+    char* inputBuffer = malloc(MAX_INPUT_LENGTH * sizeof(char));
+
+    int readCount = 0;
+    int length;
+    do {
+        fgets(inputBuffer, MAX_INPUT_LENGTH, stdin);
+        length = strlen(inputBuffer);
+        readCount++;
+    } while (length == (MAX_INPUT_LENGTH - 1) && inputBuffer[MAX_INPUT_LENGTH - 2] != '\n');
+
+    if (readCount != 1) {
+        return NULL;
+    }
+
+    // We read the whole input in 1 go
+    for (int i = 0; i < length; i++) {
+        if (inputBuffer[i] == '\n') {
+            inputBuffer[i] = '\0';
+            break;
+        }
+    }
+    return inputBuffer;
 }

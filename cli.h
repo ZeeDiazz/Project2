@@ -6,3 +6,4 @@
 #include "commands.h"
 
 void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput);
+char* getUserInput();
