@@ -1,5 +1,8 @@
-#include <stdio.h>
+#pragma once
+
+#include <stdlib.h>
+#include "card.h"
+#include "list.h"
 #include "commands.h"
 
-// TODO add columns and foundations when they are made
-void printBoard(Command previousCommand);
+void printBoard(CardList** columns, CardList** foundations, Command previousCommand);
