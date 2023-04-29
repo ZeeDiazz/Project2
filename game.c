@@ -1,6 +1,7 @@
 #include <string.h>
 #include "game.h"
 #include "moveValidation.h"
+#include "readFile.h"
 
 bool canUseCommand(Game game, Command command) {
     if (command.name == QQ || !command.isValid) {
@@ -39,20 +40,47 @@ bool canUseCommand(Game game, Command command) {
     return false; // should never reach
 }
 
-void performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations) {
+char* performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations) {
     switch (command.name)
     {
         case LD:
+            Card* deck;
             if (command.hasArguments) {
-                // read the file
+                FileAssessment assessment = readFromFile(command.arguments);
+                switch (assessment.statusCode)
+                {
+                    case SUCCESS:
+                        deck = assessment.deck;
+                        break;
+                    case DUPLICATE:
+                        return "There was a duplicate card in the file";
+                    case WRONGCARDFORMAT:
+                        return "There is a card in the wrong format";
+                    case FILENOTFOUND:
+                        return "The file could not be found";
+                    case MISSINGCARDS:
+                        return "There was not enough cards in the file";
+                    default:
+                        return "Unknown error";
+                }
             }
             else {
-                // make a new deck of cards
+                deck = makeDeck();
             }
-            break;
+            for (int i = 0; i < 52; i++) {
+                addCard(columns[i % 7], deck[i]);
+            }
+            return "OK";
         case SW:
-            // show all cards
-            break;
+            for (int columnIndex = 0; columnIndex < 7; columnIndex++) {
+                LinkedList* column = columns[columnIndex];
+                Node* node = column->head;
+                for (int i = 0; i < column->size; i++) {
+                    node->card.seen = true;
+                    node = node->next;
+                }
+            }
+            return "OK";
         case SI:
             // shuffle the cards
             break;
@@ -99,8 +127,9 @@ void performCommand(Game* game, Command command, LinkedList** columns, LinkedLis
                 if (canMove) {
                     removeCard(from, moving);
                     addCard(to, moving);
+                    return "OK";
                 }
-                return;
+                return "Couldn't move card";
             }
             // move specific card
 
@@ -108,18 +137,19 @@ void performCommand(Game* game, Command command, LinkedList** columns, LinkedLis
             game->totalMoves++;
             game->currentMove++;
             // addMove(game->moves, command.arguments);
-            break;
+            return "OK";
         case QQ:
             game->phase = QUITTING;
-            break;
+            return "OK";
         case P:
             game->phase = PLAYING;
-            break;
+            return "OK";
         case Q:
             game->phase = STARTUP;
-            break;
+            return "OK";
         // Unknown command
         default:
-            break;
+            return "Unknown command";
     }
+    return "Unknown error";
 }
