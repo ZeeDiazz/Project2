@@ -44,7 +44,7 @@ Command parseCommand(char* commandString) {
         return makeGameMoveCommand(commandString);
     }
 
-    int commandNameLength = strlen(commandStrings[command.name]);
+    int commandNameLength = strlen(commandStrings[command.name - 1]);
     int argumentLength = inputLength - commandNameLength - 1;
     if (argumentLength > 0) {
         command.hasArguments = true;
