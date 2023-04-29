@@ -41,9 +41,9 @@ JS
 5H
 7C
 TD
-AH
 JH
 KH
+AH
 4H
 QC
 3C
