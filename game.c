@@ -82,11 +82,12 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 LinkedList* column = columns[i];
                 int length = column->size;
                 Node* current = column->head;
-                Node* next = current->next;
+                printf("Ooga: %p\n", current);
+                Node* next;
                 for (int j = 0; j < length; j++) {
+                    next = current->next;
                     free(current);
                     current = next;
-                    next = current->next;
                 }
                 column->size = 0;
             }
