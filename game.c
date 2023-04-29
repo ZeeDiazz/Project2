@@ -4,12 +4,14 @@
 #include "moveValidation.h"
 #include "readFile.h"
 
-bool canUseCommand(Game game, Command command) {
+bool canUseCommand(GamePhase phase, Command command) {
+    printf("Command error %i\n", command.error);
     if (command.name == QQ || command.error != NO_ERROR) {
         return true;
     }
 
-    switch (game.phase)
+    printf("Current phase: %i\n", phase);
+    switch (phase)
     {
         case STARTUP:
             switch (command.name)

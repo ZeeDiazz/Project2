@@ -23,5 +23,5 @@ typedef struct Game
 } Game;
 
 
-bool canUseCommand(Game game, Command command);
+bool canUseCommand(GamePhase phase, Command command);
 char* performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations);

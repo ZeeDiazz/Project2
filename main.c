@@ -38,7 +38,7 @@ int main() {
         }
         // TODO make parse better (take the current phase?)
         lastCommand = parseCommand(userInput);
-        if (!canUseCommand(game, lastCommand)) {
+        if (!canUseCommand(game.phase, lastCommand)) {
             lastCommand.error = WRONG_TIME;
             message = "Cannot use this command at this time";
             continue;
