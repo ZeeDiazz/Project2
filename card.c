@@ -23,7 +23,7 @@ Card* makeDeck() {
 }
 
 char* cardToString(Card card) {
-    char charSuits[4] = "CDHS";
+    char charSuits[4] = "CHDS";
     char charValues[13] = "A23456789TJQK";
 
     if (card.suit < 1 || card.suit > 4 || card.value < 1 || card.value > 13) {

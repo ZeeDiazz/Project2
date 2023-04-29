@@ -28,7 +28,7 @@ FileAssessment readFromFile(char *filename) {
 
 
     Card currentCard;
-    Card cards[52]; // Deck that will be made
+    Card* cards = malloc(52 * sizeof(Card)); // Deck that will be made
     bool checkCards[4][13] = {{0}}; // Card-array for checking for duplicates
     int cardCounter = 0;
     while (fgets(line, BUFFER_SIZE, pFile) != NULL && cardCounter < 52) {
@@ -159,5 +159,6 @@ Card assignCard(char *lineFromFile) {
             return card;
 
     }
+    card.seen = false;
     return card;
 }
