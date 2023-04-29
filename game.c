@@ -76,6 +76,22 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             else {
                 deck = makeDeck();
             }
+
+            // Empty the columns before putting more stuff into them
+            for (int i = 0; i < 7; i++) {
+                LinkedList* column = columns[i];
+                int length = column->size;
+                Node* current = column->head;
+                Node* next = current->next;
+                for (int j = 0; j < length; j++) {
+                    free(current);
+                    current = next;
+                    next = current->next;
+                }
+                column->size = 0;
+            }
+
+            // Add the cards
             for (int i = 0; i < 52; i++) {
                 addCard(columns[i % 7], deck[i]);
             }
