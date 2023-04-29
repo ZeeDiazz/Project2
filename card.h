@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 // @author Zigalow
 
 typedef enum CardSuit {
@@ -28,6 +29,7 @@ typedef enum CardValue {
 typedef struct Card {
     CardSuit suit;
     CardValue value;
+    bool seen;
 } Card;
 
 
