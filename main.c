@@ -49,6 +49,7 @@ int main() {
 
         performCommand(&game, lastCommand, columns, foundations);
     }
-    printf("Hello, World!\n");
+
+    printf("\nProgram terminated\n");
     return 0;
 }
