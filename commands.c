@@ -74,11 +74,8 @@ Command parseCommand(char* commandString) {
 }
 
 
-#define INVALID_COLUMN "Invalid column"
-#define INVALID_FOUNDATION "Invalid foundation"
-#define MALFORMED_MOVE_COMMAND "Malformed command (has to be \"to->from\")"
 Command makeGameMoveCommand(char* potentialMove) {
-    Command command = {MOVE, true, true, ""};
+    Command command = {MOVE, NO_ERROR, true, potentialMove};
 
     int expectedArrowIndex;
     // Check if the move is from a column
@@ -87,39 +84,14 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooHigh = (potentialMove[1] - '7' > 0);
         if (tooLow || tooHigh) {
             command.error = MALFORMED;
-            command.arguments = INVALID_COLUMN;
             return command;
         }
 
         if (potentialMove[2] == ':') {
-            if (potentialMove[3] == 'C') {
-                tooLow = (potentialMove[1] - '1' < 0);
-                tooHigh = (potentialMove[1] - '7' > 0);
-                if (tooLow || tooHigh) {
-                    command.error = MALFORMED;
-                    command.arguments = INVALID_COLUMN;
-                    return command;
-                }
-            }
-            else if (potentialMove[3] == 'F') {
-                tooLow = (potentialMove[1] - '1' < 0);
-                tooHigh = (potentialMove[1] - '4' > 0);
-                if (tooLow || tooHigh) {
-                    command.error = MALFORMED;
-                    command.arguments = INVALID_FOUNDATION;
-                    return command;
-                }
-            }
-            else {
-                command.error = MALFORMED;
-                command.arguments = MALFORMED_MOVE_COMMAND;
-                return command;
-            }
-
-            expectedArrowIndex = 5;
+            // TODO
         }
         else {
-            expectedArrowIndex = 3;
+            expectedArrowIndex = 2;
         }
     }
     // Check if move is from a foundation
@@ -128,50 +100,44 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooHigh = (potentialMove[1] - '4' > 0);
         if (tooLow || tooHigh) {
             command.error = MALFORMED;
-            command.arguments = INVALID_COLUMN;
             return command;
         }
-        expectedArrowIndex = 3;
+        expectedArrowIndex = 2;
     }
     // If it's not a column or a foundation
     else {
         command.error = MALFORMED;
-        command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
 
     // Check if the arrow is at the expected location
     if (potentialMove[expectedArrowIndex] != '-' || potentialMove[expectedArrowIndex + 1] != '>') {
         command.error = MALFORMED;
-        command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
 
-    if (potentialMove[3] == 'C') {
-        bool tooLow = (potentialMove[1] - '1' < 0);
-        bool tooHigh = (potentialMove[1] - '7' > 0);
+    int movingToIndex = expectedArrowIndex + 2;
+    if (potentialMove[movingToIndex] == 'C') {
+        bool tooLow = (potentialMove[movingToIndex + 1] - '1' < 0);
+        bool tooHigh = (potentialMove[movingToIndex + 1] - '7' > 0);
         if (tooLow || tooHigh) {
             command.error = MALFORMED;
-            command.arguments = INVALID_COLUMN;
             return command;
         }
     }
-    else if (potentialMove[3] == 'F') {
-        bool tooLow = (potentialMove[1] - '1' < 0);
-        bool tooHigh = (potentialMove[1] - '4' > 0);
+    else if (potentialMove[movingToIndex] == 'F') {
+        bool tooLow = (potentialMove[movingToIndex + 1] - '1' < 0);
+        bool tooHigh = (potentialMove[movingToIndex + 1] - '4' > 0);
         if (tooLow || tooHigh) {
             command.error = MALFORMED;
-            command.arguments = INVALID_FOUNDATION;
             return command;
         }
     }
     else {
         command.error = MALFORMED;
-        command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
     
-    command.arguments = potentialMove;
     return command;
 }
 
