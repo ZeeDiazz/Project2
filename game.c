@@ -52,16 +52,8 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                     case SUCCESS:
                         deck = assessment.deck;
                         break;
-                    case DUPLICATE:
-                        return "There was a duplicate card in the file";
-                    case WRONGCARDFORMAT:
-                        return "There is a card in the wrong format";
-                    case FILENOTFOUND:
-                        return "The file could not be found";
-                    case MISSINGCARDS:
-                        return "There was not enough cards in the file";
                     default:
-                        return "Unknown error";
+                        return assessment.errorMessage;
                 }
             }
             else {
@@ -83,13 +75,13 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             return "OK";
         case SI:
             // shuffle the cards
-            break;
+            return "OK";
         case SR:
             // shuffle the cards
-            break;
+            return "OK";
         case SD:
             // save the cards to a file
-            break;
+            return "OK";
         case MOVE:
             // TODO make better when there are more linked list methods
             LinkedList *from, *to;
@@ -104,8 +96,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             }
 
             if (from->size == 0) {
-                // TODO error message?
-                return;
+                return "There are no cards to move there";
             }
 
             // Move the card on top of foundation / at the bottom of column
@@ -151,5 +142,6 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
         default:
             return "Unknown command";
     }
+    // Should never reach
     return "Unknown error";
 }
