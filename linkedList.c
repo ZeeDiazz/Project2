@@ -69,9 +69,30 @@ bool removeCard(LinkedList* list, Card card) {
     }
     return false;
 }
+/**
+ * Adds a list on top og another list
+ * Adds it at the end of the main list
+ * @author ZeeDiazz (Zaid)
+ * @param list
+ * @param addList
+ */
 void addList(LinkedList* list, LinkedList* addList){
+    //Iterate to get the last element of list
+    Node* temp = list->head;
+    while (temp->next != NULL){
+        temp = temp->next;
+    }
+    //Add addList from where the list ends
+    temp->next = addList->head;
 
+    //Update the main list size
+    list->size += addList->size;
+
+    //Make the addList empty
+    addList->head = NULL;
+    addList->size = 0;
 }
+
 /**
  * it splits a list into two, and returns the new splited list
  * @author ZeeDiazz (Zaid)
