@@ -79,7 +79,7 @@ bool removeCard(LinkedList* list, Card card) {
 LinkedList* splitList(LinkedList* list, int index) {
 
     LinkedList *tempList = makeEmptyList();
-    if (index <= 0 || index > list->size - 1) {
+    if (index < 0 || index > list->size - 1) {
         return tempList;
     }
 
@@ -87,10 +87,12 @@ LinkedList* splitList(LinkedList* list, int index) {
     Node *temp = list->head;
     for (int i = 0; i < index; i++) {
         temp = temp->next;
-        list->head->next = NULL; //Remove all cards above index in the original list
     }
     //Set the separated list to temp
-    tempList->head = temp;
+    tempList->head = temp->next;
+
+    //Remove all cards above index in the original list
+    temp->next= NULL;
 
     //update the size of tempList
     tempList->size = list->size - index; //includes all from the original list except that before index
