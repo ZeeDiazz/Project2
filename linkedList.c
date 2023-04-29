@@ -69,6 +69,9 @@ bool removeCard(LinkedList* list, Card card) {
     }
     return false;
 }
+void addList(LinkedList* list, LinkedList* addList){
+
+}
 /**
  * it splits a list into two, and returns the new splited list
  * @author ZeeDiazz (Zaid)

@@ -22,6 +22,7 @@ typedef struct LinkedList {
 LinkedList* makeEmptyList();
 void addCard(LinkedList* list,Card card);
 bool removeCard(LinkedList* list, Card card);
+void addList(LinkedList* list, LinkedList* addList);
 
 LinkedList* splitList(LinkedList* list, int index);
 
