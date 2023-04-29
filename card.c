@@ -7,7 +7,7 @@
  * 
  * @return Returns unshuffled deck
  */
-Deck makeDeck() {
+Card* makeDeck() {
     Card cards[52];
     int currentIndex = 0;
 
@@ -19,8 +19,7 @@ Deck makeDeck() {
         }
     }
 
-    Deck *deck = {cards};
-    return *deck;
+    return cards;
 }
 
 char* cardToString(Card card) {

@@ -22,7 +22,7 @@ typedef enum StatusCode {
 typedef struct FileAssessment {
     StatusCode statusCode;
     char *errorMessage;
-    Deck deck;
+    Card* deck;
 } FileAssessment;
 
 /**

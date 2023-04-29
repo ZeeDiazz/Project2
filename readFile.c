@@ -83,8 +83,7 @@ FileAssessment readFromFile(char *filename) {
 
     assessment.statusCode = SUCCESS;
     assessment.errorMessage = "OK";
-    Deck *deck = {cards};
-    assessment.deck = *deck;
+    assessment.deck = cards;
 
     return assessment;
 }
@@ -95,7 +94,6 @@ FileAssessment readFromFile(char *filename) {
  * @return Returns the assigned card
  */
 Card assignCard(char *lineFromFile) {
-
     Card card;
 
     switch (toupper(lineFromFile[0])) {

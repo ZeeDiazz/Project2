@@ -32,17 +32,9 @@ typedef struct Card {
 
 
 /**
- * struct named Deck that contains a card-array of 52 cards
- */
-typedef struct {
-    Card cards[52];
-} Deck;
-
-
-/**
  * 
  * @return Returns unshuffled deck 
  */
-Deck makeDeck();
+Card* makeDeck();
 
 char* cardToString(Card card);
