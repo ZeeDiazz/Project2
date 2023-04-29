@@ -77,8 +77,10 @@ bool removeCard(LinkedList* list, Card card) {
  * @return
  */
 LinkedList* splitList(LinkedList* list, int index){
+
+    LinkedList* tempList = makeEmptyList();
     if (index < 0 || index > list->size-1) {
-        return list;
+        return tempList;
     }
 
     //iterate through the list to the given index
@@ -90,7 +92,7 @@ LinkedList* splitList(LinkedList* list, int index){
     //Set the next list to temp
     //return the splitedlist
 
-    return temp; //return temp is temporary
+    return tempList; //return temp is temporary
 }
 
 /**
