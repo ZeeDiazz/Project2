@@ -12,7 +12,7 @@ char* inputText = "INPUT >";
 
 int columnWidth = 2 * 7 + 6;
 int foundationWidth = 2 + 1 + 2;
-void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput) {
+void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput, char* message) {
     int rows = 7; // minimum 7
     for (int i = 0; i < 7; i++) {
         if (columns[i]->size > rows) {
@@ -22,12 +22,11 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     int columnsLength = rows * (columnWidth + 1);
     int foundationsLength = 4 * (2 + foundationWidth);
 
-    // If the command was invalid or unknown, output the reason, otherwise output ok
-    char* message = (!previousCommand.isValid) ? previousCommand.arguments : "OK";
+    char* actualMessage = (message == NULL) ? "" : message;
     char* lastCommand = (lastInput == NULL) ? "" : commandToString(previousCommand);
 
     int commandLength = strlen(commandText) + strlen(lastCommand) + 1;
-    int messageLength = strlen(messageText) + strlen(message) + 1;
+    int messageLength = strlen(messageText) + strlen(actualMessage) + 1;
     int inputLength = strlen(inputText) + 1;
 
     int totalLength = strlen(top) + columnsLength + foundationsLength + 1 + commandLength + messageLength + inputLength;
@@ -89,8 +88,8 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
     for (int i = 0; i < strlen(messageText); i++) {
         board[index++] = messageText[i];
     }
-    for (int i = 0; i < strlen(message); i++) {
-        board[index++] = message[i];
+    for (int i = 0; i < strlen(actualMessage); i++) {
+        board[index++] = actualMessage[i];
     }
     board[index++] = '\n';
     for (int i = 0; i < strlen(inputText); i++) {

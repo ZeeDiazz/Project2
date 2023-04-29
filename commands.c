@@ -10,6 +10,8 @@ bool commandCanTakeArguments(CommandName name) {
 }
 
 Command parseCommand(char* commandString) {
+    Command command = {UNKNOWN, true, false, NULL};
+
     char* commandStrings[COMMAND_COUNT];
     commandStrings[0] = "LD";
     commandStrings[1] = "SW";
@@ -21,46 +23,50 @@ Command parseCommand(char* commandString) {
     commandStrings[7] = "Q";
 
     int inputLength = strlen(commandString);
-    CommandName commandName = -1;
     for (int i = 0; i < COMMAND_COUNT; i++) {
         char* checkingName = commandStrings[i];
         int checkingLength = strlen(checkingName);
-        if (strncmp(commandString, checkingName, checkingLength) == 0 && (commandCanTakeArguments(i+1) || inputLength == checkingLength)) {
-            commandName = i + 1;
+        if (strncmp(commandString, checkingName, checkingLength) == 0) {
+            command.name = (CommandName)i+1;
+            // Command is not valid if it cannot take arguments, and the command is longer than the name
+            command.isValid = (commandCanTakeArguments(command.name) || inputLength == checkingLength) && command.isValid;
             break;
         }
     }
 
     // Check if it's a move command
-    if (commandName == -1) {
+    if (command.name == UNKNOWN) {
         if (inputLength != 6 && inputLength != 9) {
             // Cannot be a move
-            Command unknown = {UNKNOWN, false, true, "Unknown command"};
-            return unknown;
+            command.isValid = false;
+            return command;
         }
         return makeGameMoveCommand(commandString);
     }
 
-    int argumentLength = 0;
-    // If the command can take arguments
-    if (commandCanTakeArguments(commandName)) {
-        // Get the length of the arguments (-1 because of the space)
-        int length = strlen(commandString) - strlen(commandStrings[commandName]) - 1;
-        if (length > 0) {
-            argumentLength = length;
-        }
+    int commandNameLength = strlen(commandStrings[command.name]);
+    int argumentLength = inputLength - commandNameLength - 1;
+    if (argumentLength > 0) {
+        command.hasArguments = true;
+        command.isValid = (commandString[commandNameLength] == ' ') && command.isValid;
+    }
+    else {
+        argumentLength = 0;
     }
 
-    bool hasArguments = (argumentLength > 0);
-    char* arguments = malloc(argumentLength);
-    if (hasArguments) {
-        int argumentOffset = strlen(commandString) - argumentLength;
-        for (int i = 0; i < argumentLength; i++) {
-            arguments[i] = commandString[i + argumentOffset];
+    if (command.hasArguments && command.isValid) {
+        command.arguments = malloc(argumentLength);
+        if (command.hasArguments) {
+            int argumentOffset = strlen(commandString) - argumentLength;
+            for (int i = 0; i < argumentLength; i++) {
+                command.arguments[i] = commandString[i + argumentOffset];
+            }
         }
     }
+    else {
+        command.arguments = NULL;
+    }
 
-    Command command = {commandName, true, hasArguments, arguments};
     return command;
 }
 
@@ -188,7 +194,7 @@ char* commandToString(Command command) {
 
     char* commandName = commandStrings[command.name];
     char* stringRepresentation;
-    int stringLength = strlen(commandName) + 1;
+    int stringLength = strlen(commandName);
 
     if (command.hasArguments && command.isValid) {
         stringLength += 1 + strlen(command.arguments);
@@ -201,7 +207,7 @@ char* commandToString(Command command) {
         currentIndex++;
     }
 
-    if (command.hasArguments) {
+    if (command.hasArguments && command.isValid) {
         stringRepresentation[currentIndex] = ' ';
         currentIndex++;
         for (int i = 0; i < strlen(command.arguments); i++) {

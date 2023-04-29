@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "game.h"
 #include "moveValidation.h"
 #include "readFile.h"
@@ -41,6 +42,13 @@ bool canUseCommand(Game game, Command command) {
 }
 
 char* performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations) {
+    if (!command.isValid) {
+        if (!commandCanTakeArguments(command.name) && command.hasArguments) {
+            return "This command does not take any arguments";
+        }
+        return "Invalid command";
+    }
+
     switch (command.name)
     {
         case LD:

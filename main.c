@@ -25,8 +25,9 @@ int main() {
     Command lastCommand = {UNKNOWN, false, true, ""};
 
     char* userInput = NULL;
+    char* message = NULL;
     while (game.phase != QUITTING) {
-        printBoard(columns, foundations, lastCommand, userInput);
+        printBoard(columns, foundations, lastCommand, userInput, message);
 
         if (userInput != NULL) {
             free(userInput);
@@ -39,15 +40,10 @@ int main() {
         lastCommand = parseCommand(userInput);
         if (!canUseCommand(game, lastCommand)) {
             lastCommand.isValid = false;
-            lastCommand.hasArguments = true;
-            lastCommand.arguments = "Cannot use this command at this time";
-        }
-        // If the command was invalid, don't bother the actual game state
-        if (!lastCommand.isValid) {
-            continue;
+            message = "Cannot use this command at this time";
         }
 
-        performCommand(&game, lastCommand, columns, foundations);
+        message = performCommand(&game, lastCommand, columns, foundations);
     }
 
     printf("\nProgram terminated\n");
