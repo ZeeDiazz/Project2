@@ -41,6 +41,7 @@ int main() {
         if (!canUseCommand(game, lastCommand)) {
             lastCommand.isValid = false;
             message = "Cannot use this command at this time";
+            continue;
         }
 
         message = performCommand(&game, lastCommand, columns, foundations);
