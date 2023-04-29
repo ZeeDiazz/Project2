@@ -44,8 +44,7 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
             char* cardString;
             if (row < currentList->size) {
                 Card card = getCardAt(currentList, row);
-                // TODO check if card has been seen
-                cardString = (false) ? cardToString(getCardAt(currentList, row)) : "[]";
+                cardString = (card.seen) ? cardToString(getCardAt(currentList, row)) : "[]";
             }
             else {
                 // Empty card

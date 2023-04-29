@@ -8,12 +8,12 @@
  * @return Returns unshuffled deck
  */
 Card* makeDeck() {
-    Card cards[52];
+    Card* cards = malloc(52 * sizeof(Card));
     int currentIndex = 0;
 
     for (CardSuit suit = Clubs; suit <= Spades; suit++) {
         for (CardValue cardValue = 1; cardValue <= 13; cardValue++) {
-            Card currentCard = {suit, cardValue};
+            Card currentCard = {suit, cardValue, false};
             cards[currentIndex] = currentCard;
             currentIndex++;
         }
