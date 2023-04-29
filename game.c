@@ -5,7 +5,7 @@
 #include "readFile.h"
 
 bool canUseCommand(Game game, Command command) {
-    if (command.name == QQ || !command.isValid) {
+    if (command.name == QQ || command.error != NO_ERROR) {
         return true;
     }
 
@@ -42,11 +42,20 @@ bool canUseCommand(Game game, Command command) {
 }
 
 char* performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations) {
-    if (!command.isValid) {
-        if (!commandCanTakeArguments(command.name) && command.hasArguments) {
-            return "This command does not take any arguments";
-        }
-        return "Invalid command";
+    switch (command.error)
+    {
+        case NO_ERROR:
+            break;
+        case WRONG_TIME:
+            return "Cannot use this command at this time";
+        case MALFORMED:
+            return "Malformed command";
+        case TOO_MANY_ARGUMENTS:
+            return "Too many arguments";
+        case TOO_FEW_ARGUMENTS:
+            return "Too few arguements";
+        default:
+            return "Invalid command";
     }
 
     switch (command.name)

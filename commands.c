@@ -10,7 +10,7 @@ bool commandCanTakeArguments(CommandName name) {
 }
 
 Command parseCommand(char* commandString) {
-    Command command = {UNKNOWN, true, false, NULL};
+    Command command = {UNKNOWN, NO_ERROR, false, NULL};
 
     char* commandStrings[COMMAND_COUNT];
     commandStrings[0] = "LD";
@@ -28,8 +28,6 @@ Command parseCommand(char* commandString) {
         int checkingLength = strlen(checkingName);
         if (strncmp(commandString, checkingName, checkingLength) == 0) {
             command.name = (CommandName)i+1;
-            // Command is not valid if it cannot take arguments, and the command is longer than the name
-            command.isValid = (commandCanTakeArguments(command.name) || inputLength == checkingLength) && command.isValid;
             break;
         }
     }
@@ -38,7 +36,7 @@ Command parseCommand(char* commandString) {
     if (command.name == UNKNOWN) {
         if (inputLength != 6 && inputLength != 9) {
             // Cannot be a move
-            command.isValid = false;
+            command.error = MALFORMED;
             return command;
         }
         return makeGameMoveCommand(commandString);
@@ -47,14 +45,19 @@ Command parseCommand(char* commandString) {
     int commandNameLength = strlen(commandStrings[command.name - 1]);
     int argumentLength = inputLength - commandNameLength - 1;
     if (argumentLength > 0) {
-        command.hasArguments = true;
-        command.isValid = (commandString[commandNameLength] == ' ') && command.isValid;
+        // Command is not valid if it cannot take arguments, and the command is longer than the name
+        if (commandCanTakeArguments(command.name)) {
+            command.hasArguments = true;
+        }
+        else if (command.error == NO_ERROR) {
+            command.error = TOO_MANY_ARGUMENTS;
+        }
     }
     else {
         argumentLength = 0;
     }
 
-    if (command.hasArguments && command.isValid) {
+    if (command.hasArguments && command.error == NO_ERROR) {
         command.arguments = malloc(argumentLength);
         if (command.hasArguments) {
             int argumentOffset = strlen(commandString) - argumentLength;
@@ -83,7 +86,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '7' > 0);
         if (tooLow || tooHigh) {
-            command.isValid = false;
+            command.error = MALFORMED;
             command.arguments = INVALID_COLUMN;
             return command;
         }
@@ -93,7 +96,7 @@ Command makeGameMoveCommand(char* potentialMove) {
                 tooLow = (potentialMove[1] - '1' < 0);
                 tooHigh = (potentialMove[1] - '7' > 0);
                 if (tooLow || tooHigh) {
-                    command.isValid = false;
+                    command.error = MALFORMED;
                     command.arguments = INVALID_COLUMN;
                     return command;
                 }
@@ -102,13 +105,13 @@ Command makeGameMoveCommand(char* potentialMove) {
                 tooLow = (potentialMove[1] - '1' < 0);
                 tooHigh = (potentialMove[1] - '4' > 0);
                 if (tooLow || tooHigh) {
-                    command.isValid = false;
+                    command.error = MALFORMED;
                     command.arguments = INVALID_FOUNDATION;
                     return command;
                 }
             }
             else {
-                command.isValid = false;
+                command.error = MALFORMED;
                 command.arguments = MALFORMED_MOVE_COMMAND;
                 return command;
             }
@@ -124,7 +127,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '4' > 0);
         if (tooLow || tooHigh) {
-            command.isValid = false;
+            command.error = MALFORMED;
             command.arguments = INVALID_COLUMN;
             return command;
         }
@@ -132,14 +135,14 @@ Command makeGameMoveCommand(char* potentialMove) {
     }
     // If it's not a column or a foundation
     else {
-        command.isValid = false;
+        command.error = MALFORMED;
         command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
 
     // Check if the arrow is at the expected location
     if (potentialMove[expectedArrowIndex] != '-' || potentialMove[expectedArrowIndex + 1] != '>') {
-        command.isValid = false;
+        command.error = MALFORMED;
         command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
@@ -148,7 +151,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '7' > 0);
         if (tooLow || tooHigh) {
-            command.isValid = false;
+            command.error = MALFORMED;
             command.arguments = INVALID_COLUMN;
             return command;
         }
@@ -157,13 +160,13 @@ Command makeGameMoveCommand(char* potentialMove) {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '4' > 0);
         if (tooLow || tooHigh) {
-            command.isValid = false;
+            command.error = MALFORMED;
             command.arguments = INVALID_FOUNDATION;
             return command;
         }
     }
     else {
-        command.isValid = false;
+        command.error = MALFORMED;
         command.arguments = MALFORMED_MOVE_COMMAND;
         return command;
     }
@@ -174,7 +177,7 @@ Command makeGameMoveCommand(char* potentialMove) {
 
 char* commandToString(Command command) {
     if (command.name == MOVE) {
-        return command.arguments;
+        return (command.error == NO_ERROR) ? command.arguments : "MOVE";
     }
 
     if (command.name > COMMAND_COUNT) {
@@ -196,7 +199,7 @@ char* commandToString(Command command) {
     char* stringRepresentation;
     int stringLength = strlen(commandName);
 
-    if (command.hasArguments && command.isValid) {
+    if (command.hasArguments && command.error == NO_ERROR) {
         stringLength += 1 + strlen(command.arguments);
     }
     stringRepresentation = malloc(stringLength + 1);
@@ -207,7 +210,7 @@ char* commandToString(Command command) {
         currentIndex++;
     }
 
-    if (command.hasArguments && command.isValid) {
+    if (command.hasArguments && command.error == NO_ERROR) {
         stringRepresentation[currentIndex] = ' ';
         currentIndex++;
         for (int i = 0; i < strlen(command.arguments); i++) {

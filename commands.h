@@ -14,9 +14,17 @@ typedef enum CommandName {
     MOVE,
 } CommandName;
 
+typedef enum CommandError {
+    NO_ERROR = 0,
+    WRONG_TIME,
+    MALFORMED,
+    TOO_MANY_ARGUMENTS,
+    TOO_FEW_ARGUMENTS,
+} CommandError;
+
 typedef struct Command {
     CommandName name;
-    bool isValid;
+    CommandError error;
     bool hasArguments;
     char* arguments;
 } Command;
