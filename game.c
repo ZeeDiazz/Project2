@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "game.h"
 #include "moveValidation.h"
-#include "readFile.h"
+#include "file.h"
 
 bool canUseCommand(GamePhase phase, Command command) {
     if (command.name == QQ || command.error != NO_ERROR) {

@@ -7,7 +7,7 @@
 #include "linkedList.h"
 #include "moveStack.h"
 #include "moveValidation.h"
-#include "readFile.h"
+#include "file.h"
 #include "shuffleDeck.h"
 
 int main() {
