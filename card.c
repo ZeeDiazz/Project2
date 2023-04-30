@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "card.h"
 /**
  * 
@@ -37,3 +38,72 @@ char* cardToString(Card card) {
     return string;
 }
 
+Card stringToCard(char* string) {
+    Card card;
+
+    switch (toupper(string[0])) {
+        case 'A':
+            card.value = Ace;
+            break;
+        case '2':
+            card.value = Two;
+            break;
+        case '3':
+            card.value = Three;
+            break;
+        case '4':
+            card.value = Four;
+            break;
+        case '5':
+            card.value = Five;
+            break;
+        case '6':
+            card.value = Six;
+            break;
+        case '7':
+            card.value = Seven;
+            break;
+        case '8':
+            card.value = Eight;
+            break;
+        case '9':
+            card.value = Nine;
+            break;
+        case 'T':
+            card.value = Ten;
+            break;
+        case 'J':
+            card.value = Jack;
+            break;
+        case 'Q':
+            card.value = Queen;
+            break;
+        case 'K':
+            card.value = King;
+            break;
+        default:
+            card.value = (CardValue) NULL;
+            return card;
+    }
+
+    switch (toupper(string[1])) {
+        case 'C':
+            card.suit = Clubs;
+            break;
+        case 'H':
+            card.suit = Hearts;
+            break;
+        case 'D':
+            card.suit = Diamonds;
+            break;
+        case 'S':
+            card.suit = Spades;
+            break;
+        default:
+            card.suit = (CardValue) NULL;
+            return card;
+
+    }
+    card.seen = false;
+    return card;
+}

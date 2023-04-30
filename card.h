@@ -40,3 +40,4 @@ typedef struct Card {
 Card* makeDeck();
 
 char* cardToString(Card card);
+Card stringToCard(char* string);
