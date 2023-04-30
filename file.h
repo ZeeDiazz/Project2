@@ -30,4 +30,5 @@ typedef struct FileAssessment {
  * @param filename The filename of the file that needs to be read
  * @return Returns the FileAssessment of the file read
  */
-FileAssessment readFromFile(char *filename);
+FileAssessment readDeckFromFile(char *filename);
+void saveDeckToFile(char* filename, Card* cards);

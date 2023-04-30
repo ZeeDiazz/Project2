@@ -11,7 +11,7 @@
  * @return Returns FileAssessment, which is determined by different factors when reading from file
  */
  
-FileAssessment readFromFile(char *filename) {
+FileAssessment readDeckFromFile(char *filename) {
 
     FileAssessment assessment;
 

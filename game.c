@@ -64,7 +64,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
     {
         case LD:
             if (command.hasArguments) {
-                FileAssessment assessment = readFromFile(command.arguments);
+                FileAssessment assessment = readDeckFromFile(command.arguments);
                 switch (assessment.statusCode)
                 {
                     case SUCCESS:
