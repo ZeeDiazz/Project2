@@ -149,4 +149,15 @@ Card getCardAt(LinkedList* list, int index){
     return node->card;
 }
 
-
+int getCardIndex(LinkedList* list, Card card) {
+    Node* current = list->head;
+    for (int i = 0; i < list->size; i++) {
+        Card currentCard = current->card;
+        if (currentCard.suit == card.suit && currentCard.value == card.value) {
+            return i;
+        }
+        current = current->next;
+    }
+    // Card was not present
+    return -1;
+}

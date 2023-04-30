@@ -27,3 +27,4 @@ void addList(LinkedList* list, LinkedList* addList);
 LinkedList* splitList(LinkedList* list, int index);
 
 Card getCardAt(LinkedList* list, int index);
+int getCardIndex(LinkedList* list, Card card);
