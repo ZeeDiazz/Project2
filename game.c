@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "game.h"
@@ -5,7 +6,6 @@
 #include "readFile.h"
 
 bool canUseCommand(GamePhase phase, Command command) {
-    printf("Command error %i\n", command.error);
     if (command.name == QQ || command.error != NO_ERROR) {
         return true;
     }
