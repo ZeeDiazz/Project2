@@ -118,7 +118,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
         case MOVE:
             LinkedList *from, *to;
             Card moving;
-            bool canMove;
+            MoveError moveError;
             // Find the place we are moving from
             if (command.arguments[0] == 'C') {
                 from = columns[command.arguments[1] - '1'];
@@ -161,7 +161,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
 
             if (command.arguments[commandLength - 2] == 'C') {
                 to = columns[command.arguments[commandLength - 1] - '1'];
-                canMove = canMoveToColumn(moving, to);
+                moveError = canMoveToColumn(moving, to);
             }
             else {
                 // Can only move to foundation a single card at a time
@@ -169,20 +169,39 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                     return "Cannot move more than one card to foundation at a time";
                 }
                 to = foundations[command.arguments[commandLength - 1] - '1'];
-                canMove = canMoveToFoundation(moving, to);
+                moveError = canMoveToFoundation(moving, to);
 
                 int cardsInFoundation = 0;
                 for (int i = 0; i < 4; i++) {
                     cardsInFoundation += foundations[i]->size;
                 }
                 // If all 52 cards are in the foundations, the game is finished
-                if (cardsInFoundation == 51 && canMove) {
+                if (cardsInFoundation == 51 && moveError == NONE) {
                     game->phase = STARTUP;
                     return "You won!";
                 }
             }
 
-            if (!canMove) {
+            switch (moveError)
+            {
+                case NONE:
+                    break;
+                case SAME_SUIT:
+                    return "Cannot move card onto another card of the same suit";
+                case DIFFERENT_SUIT:
+                    return "Cards in foundation have to be the same suit";
+                case EMPTY_COLUMN:
+                    return "Only kings can move to empty columns";
+                case EMPTY_FOUNDATION:
+                    return "Only aces can move to empty foundations";
+                case COLUMN_ERROR:
+                    return "The card you're moving has to be 1 value lower than the card you're moving to";
+                case FOUNDATION_ERROR:
+                    return "The cards have to be in order when moving to the foundation";
+                default:
+                    return "Illegal move";
+            }
+            if (moveError != NONE) {
                 return "This move is illegal";
             }
 
