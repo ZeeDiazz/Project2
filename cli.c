@@ -41,16 +41,23 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
         for (int column = 0; column < 7; column++) {
             LinkedList* currentList = columns[column];
             char* cardString;
+            bool hasToFree;
             if (row < currentList->size) {
                 Card card = getCardAt(currentList, row);
-                cardString = (card.seen) ? cardToString(getCardAt(currentList, row)) : "[]";
+                cardString = cardToString(card);
+                hasToFree = true;
             }
             else {
                 // Empty card
                 cardString = "  ";
+                hasToFree = false;
             }
             board[index++] = cardString[0];
             board[index++] = cardString[1];
+
+            if (hasToFree) {
+                free(cardString);
+            }
     
             if (column != 6) {
                 board[index++] = '\t';
