@@ -76,15 +76,21 @@ bool removeCard(LinkedList* list, Card card) {
  * @param list
  * @param addList
  */
-void addList(LinkedList* list, LinkedList* addList){
-    //Iterate to get the last element of list
-    Node* temp = list->head;
-    while (temp->next != NULL){
-        temp = temp->next;
+void addList(LinkedList* list, LinkedList* addList) {
+    // If the list is empty
+    if (list->size == 0) {
+        list->head = addList->head;
     }
-    //Add addList from where the list ends
-    temp->next = addList->head;
+    else {
+        //Iterate to get the last element of list
+        Node* temp = list->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        //Add addList from where the list ends
+        temp->next = addList->head;
 
+    }
     //Update the main list size
     list->size += addList->size;
 
@@ -107,16 +113,25 @@ LinkedList* splitList(LinkedList* list, int index) {
         return tempList;
     }
 
+    if (index == 0) {
+        tempList->head = list->head;
+        tempList->size = list->size;
+
+        list->head = NULL;
+        list->size = 0;
+        return tempList;
+    }
+
     //iterate through the list to the given index
     Node *temp = list->head;
-    for (int i = 0; i < index; i++) {
+    for (int i = 0; i < index - 1; i++) {
         temp = temp->next;
     }
     //Set the separated list to temp
     tempList->head = temp->next;
 
     //Remove all cards above index in the original list
-    temp->next= NULL;
+    temp->next = NULL;
 
     //update the size of tempList
     tempList->size = list->size - index; //includes all from the original list except that before index

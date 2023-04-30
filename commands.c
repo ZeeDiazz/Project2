@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "commands.h"
+#include "card.h"
 
 #define COMMAND_COUNT 8
 
@@ -88,7 +89,17 @@ Command makeGameMoveCommand(char* potentialMove) {
         }
 
         if (potentialMove[2] == ':') {
-            // TODO
+            char* card = malloc(3);
+            card[0] = potentialMove[3];
+            card[1] = potentialMove[4];
+            card[2] = '\0';
+            Card potentialCard = stringToCard(card);
+            free(card);
+            // TODO don't make null check
+            if (potentialCard.suit == NULL || potentialCard.value == NULL) {
+                command.error = MALFORMED;
+            }
+            expectedArrowIndex = 5;
         }
         else {
             expectedArrowIndex = 2;

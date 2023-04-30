@@ -10,7 +10,6 @@ bool canUseCommand(GamePhase phase, Command command) {
         return true;
     }
 
-    printf("Current phase: %i\n", phase);
     switch (phase)
     {
         case STARTUP:
@@ -118,9 +117,8 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             // save the cards to a file
             return "OK";
         case MOVE:
-            // TODO make better when there are more linked list methods
             LinkedList *from, *to;
-            Card moving, movingTo;
+            Card moving;
             bool canMove;
             // Find the place we are moving from
             if (command.arguments[0] == 'C') {
@@ -134,34 +132,57 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 return "There are no cards to move there";
             }
 
-            // Move the card on top of foundation / at the bottom of column
-            if (strlen(command.arguments) == 6) {
-                // Get the last card in the moving pile
-                moving = getCardAt(from, from->size - 1);
+            int movingIndex;
+            int commandLength = strlen(command.arguments);
 
-                // Check whether the to is a column or a foundation
-                if (command.arguments[4] == 'C') {
-                    to = columns[command.arguments[5] - '1'];
-                    canMove = canMoveToColumn(moving, getCardAt(to, to->size - 1));
-                }
-                else {
-                    to = foundations[command.arguments[5] - '1'];
-                    canMove = canMoveToFoundation(moving, getCardAt(to, to->size - 1));
-                }
+            if (commandLength == 6) {
+                // Move the very last card
+                movingIndex = from->size - 1;
 
-                // If they can move, do it
-                if (canMove) {
-                    removeCard(from, moving);
-                    addCard(to, moving);
-                    return "OK";
-                }
-                return "Couldn't move card";
             }
-            // move specific card
+            else {
+                char* commandCardString = malloc(3);
+                commandCardString[0] = command.arguments[3];
+                commandCardString[1] = command.arguments[4];
+                commandCardString[2] = '\0';
+                Card commandCard = stringToCard(commandCardString);
+                free(commandCardString);
+                movingIndex = getCardIndex(from, commandCard);
+                // If the card could not be found in the from column/foundation
+                if (movingIndex == -1) {
+                    return "Could not find the specified card";
+                }
+            }
 
+            moving = getCardAt(from, movingIndex);
+            // If the card hasn't been seen yet, pretend it isn't in the column/foundation
+            if (!moving.seen) {
+                return "Could not find the specified card";
+            }
+
+            if (command.arguments[commandLength - 2] == 'C') {
+                to = columns[command.arguments[commandLength - 1] - '1'];
+                canMove = canMoveToColumn(moving, to);
+            }
+            else {
+                // Can only move to foundation a single card at a time
+                if (movingIndex != from->size - 1) {
+                    return "Cannot move more than one card to foundation at a time";
+                }
+                to = foundations[command.arguments[commandLength - 1] - '1'];
+                canMove = canMoveToFoundation(moving, to);
+            }
+
+            if (!canMove) {
+                return "This move is illegal";
+            }
+
+            LinkedList* movingStack = splitList(from, movingIndex);
+            addList(to, movingStack);
 
             game->totalMoves++;
             game->currentMove++;
+            // TODO
             // addMove(game->moves, command.arguments);
             return "OK";
         case QQ:
