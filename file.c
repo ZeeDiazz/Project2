@@ -4,7 +4,7 @@
 #include "file.h"
 #include <stdbool.h>
 
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 255
 /**
  * 
  * @param filename Filename of the file containing the cards that needs to be read
@@ -85,4 +85,22 @@ FileAssessment readDeckFromFile(char *filename) {
     assessment.deck = cards;
 
     return assessment;
+}
+
+void saveDeckToFile(char* filename, Card* cards) {
+    FILE *file = fopen(filename, "w+");
+    char* cardsText = malloc(3 * 52);
+    int textIndex = 0;
+    for (int i = 0; i < 52; i++) {
+        char* cardText = cardToString(cards[i]);
+        for (int j = 0; j < 2; j++) {
+            cardsText[textIndex++] = cardText[j];
+        }
+        cardsText[textIndex++] = '\n';
+        free(cardText);
+    }
+
+    fputs(cardsText, file);
+    free(cardsText);
+    fclose(file);
 }

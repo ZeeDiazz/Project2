@@ -68,14 +68,14 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 switch (assessment.statusCode)
                 {
                     case SUCCESS:
-                        game->startingDeck = assessment.deck;
+                        game->deck = assessment.deck;
                         break;
                     default:
                         return assessment.errorMessage;
                 }
             }
             else {
-                game->startingDeck = makeDeck();
+                game->deck = makeDeck();
             }
 
             
@@ -90,7 +90,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
 
             // Add the cards
             for (int i = 0; i < 52; i++) {
-                addCard(columns[i % 7], game->startingDeck[i]);
+                addCard(columns[i % 7], game->deck[i]);
             }
             return "OK";
         case SW:
@@ -110,7 +110,8 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             // shuffle the cards
             return "OK";
         case SD:
-            // save the cards to a file
+            char* filename = (command.hasArguments) ? command.arguments : "cards.txt";
+            saveDeckToFile(filename, game->deck);
             return "OK";
         case AUTO:
             bool movedSomething;
@@ -271,7 +272,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             game->phase = QUITTING;
             return "OK";
         case P:
-            if (game->startingDeck == NULL) {
+            if (game->deck == NULL) {
                 return "No deck";
             }
             // Empty the columns before putting more stuff into them
@@ -283,7 +284,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 emptyList(foundations[i]);
             }
 
-            Card card = game->startingDeck[0];
+            Card card = game->deck[0];
             card.seen = true;
             addCard(columns[0], card);
 
@@ -302,7 +303,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 }
 
                 LinkedList* column = columns[currentColumnIndex + 1];
-                card = game->startingDeck[currentCardIndex++];
+                card = game->deck[currentCardIndex++];
                 card.seen = (rowCount > currentColumnIndex);
                 addCard(column, card);
             }
