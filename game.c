@@ -30,6 +30,7 @@ bool canUseCommand(GamePhase phase, Command command) {
             switch (command.name)
             {
                 case Q:
+                case AUTO:
                 case MOVE:
                     return true;
                 default:
@@ -110,6 +111,50 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             return "OK";
         case SD:
             // save the cards to a file
+            return "OK";
+        case AUTO:
+            bool movedSomething;
+
+            do {
+                movedSomething = false;
+                for (int i = 0; i < 7; i++) {
+                    LinkedList* column = columns[i];
+                    if (column->size == 0) {
+                        continue;
+                    }
+                    Card bottomCard = getCardAt(column, column->size - 1);
+
+                    for (int j = 0; j < 4; j++) {
+                        MoveError error = canMoveToFoundation(bottomCard, foundations[j]);
+                        if (error == NONE) {
+                            // Move the card, and mark it as seen
+                            bottomCard.seen = true;
+                            removeCard(column, bottomCard);
+                            addCard(foundations[j], bottomCard);
+                            movedSomething = true;
+
+                            if (column->size > 0) {
+                                // Get the new bottom card, to mark it as seen
+                                bottomCard = getCardAt(column, column->size - 1);
+                                removeCard(column, bottomCard);
+                                bottomCard.seen = true;
+                                addCard(column, bottomCard);
+                            }
+                            break;
+                        }
+                    }
+                }
+            } while (movedSomething);
+
+            int cardsInFoundation = 0;
+            for (int i = 0; i < 4; i++) {
+                cardsInFoundation += foundations[i]->size;
+            }
+            // If all 52 cards are in the foundations, the game is finished
+            if (cardsInFoundation == 52) {
+                game->phase = STARTUP;
+                return "You won!";
+            }
             return "OK";
         case MOVE:
             LinkedList *from, *to;
