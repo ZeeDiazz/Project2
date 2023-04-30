@@ -62,20 +62,19 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
     switch (command.name)
     {
         case LD:
-            Card* deck;
             if (command.hasArguments) {
                 FileAssessment assessment = readFromFile(command.arguments);
                 switch (assessment.statusCode)
                 {
                     case SUCCESS:
-                        deck = assessment.deck;
+                        game->startingDeck = assessment.deck;
                         break;
                     default:
                         return assessment.errorMessage;
                 }
             }
             else {
-                deck = makeDeck();
+                game->startingDeck = makeDeck();
             }
 
             // Empty the columns before putting more stuff into them
@@ -94,7 +93,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
 
             // Add the cards
             for (int i = 0; i < 52; i++) {
-                addCard(columns[i % 7], deck[i]);
+                addCard(columns[i % 7], game->startingDeck[i]);
             }
             return "OK";
         case SW:
@@ -189,6 +188,47 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             game->phase = QUITTING;
             return "OK";
         case P:
+            if (game->startingDeck == NULL) {
+                return "No deck";
+            }
+            // Empty the columns before putting more stuff into them
+            for (int i = 0; i < 7; i++) {
+                LinkedList* column = columns[i];
+                int length = column->size;
+                Node* current = column->head;
+                Node* next;
+                for (int j = 0; j < length; j++) {
+                    next = current->next;
+                    free(current);
+                    current = next;
+                }
+                column->size = 0;
+            }
+
+            Card card = game->startingDeck[0];
+            card.seen = true;
+            addCard(columns[0], card);
+
+            int currentCardIndex = 1;
+            int currentColumnIndex = -1;
+            int rowCount = 0;
+            while (currentCardIndex < 52) {
+                currentColumnIndex++;
+                if (currentColumnIndex > 5) {
+                    currentColumnIndex = 0;
+                    rowCount++;
+                }
+
+                if (rowCount - currentColumnIndex > 5) {
+                    continue;
+                }
+
+                LinkedList* column = columns[currentColumnIndex + 1];
+                card = game->startingDeck[currentCardIndex++];
+                card.seen = (rowCount > currentColumnIndex);
+                addCard(column, card);
+            }
+
             game->phase = PLAYING;
             return "OK";
         case Q:

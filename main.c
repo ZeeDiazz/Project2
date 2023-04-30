@@ -11,7 +11,7 @@
 #include "shuffleDeck.h"
 
 int main() {
-    Game game = {STARTUP, 0, 0, NULL};
+    Game game = {STARTUP, 0, 0, NULL, NULL};
     LinkedList** columns = malloc(7 * sizeof(LinkedList*));
     for (int i = 0; i < 7; i++) {
         columns[i] = makeEmptyList();

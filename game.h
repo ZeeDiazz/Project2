@@ -19,6 +19,7 @@ typedef struct Game
     GamePhase phase;
     int totalMoves;
     int currentMove;
+    Card* startingDeck;
     MoveStack* moves;
 } Game;
 
