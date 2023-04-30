@@ -176,3 +176,15 @@ int getCardIndex(LinkedList* list, Card card) {
     // Card was not present
     return -1;
 }
+
+void emptyList(LinkedList* list) {
+    int length = list->size;
+    Node* current = list->head;
+    Node* next;
+    for (int j = 0; j < length; j++) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    list->size = 0;
+}

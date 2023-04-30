@@ -77,18 +77,14 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 game->startingDeck = makeDeck();
             }
 
+            
             // Empty the columns before putting more stuff into them
             for (int i = 0; i < 7; i++) {
-                LinkedList* column = columns[i];
-                int length = column->size;
-                Node* current = column->head;
-                Node* next;
-                for (int j = 0; j < length; j++) {
-                    next = current->next;
-                    free(current);
-                    current = next;
-                }
-                column->size = 0;
+                emptyList(columns[i]);
+            }
+            // Empty the foundations as well
+            for (int i = 0; i < 4; i++) {
+                emptyList(foundations[i]);
             }
 
             // Add the cards
@@ -235,16 +231,11 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             }
             // Empty the columns before putting more stuff into them
             for (int i = 0; i < 7; i++) {
-                LinkedList* column = columns[i];
-                int length = column->size;
-                Node* current = column->head;
-                Node* next;
-                for (int j = 0; j < length; j++) {
-                    next = current->next;
-                    free(current);
-                    current = next;
-                }
-                column->size = 0;
+                emptyList(columns[i]);
+            }
+            // Empty the foundations as well
+            for (int i = 0; i < 4; i++) {
+                emptyList(foundations[i]);
             }
 
             Card card = game->startingDeck[0];
