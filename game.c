@@ -182,6 +182,10 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 }
             }
 
+            if (to == from) {
+                return "Your move did nothing";
+            }
+
             switch (moveError)
             {
                 case NONE:
@@ -207,6 +211,15 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
 
             LinkedList* movingStack = splitList(from, movingIndex);
             addList(to, movingStack);
+            
+            // If there are cards left in the from column
+            if (from->size > 0) {
+                Node* temp = from->head;
+                for (int i = 0; i < from->size - 1; i++) {
+                    temp = temp->next;
+                }
+                temp->card.seen = true;
+            }
 
             game->totalMoves++;
             game->currentMove++;
