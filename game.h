@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include "card.h"
 #include "moveStack.h"
 #include "commands.h"
 #include "linkedList.h"

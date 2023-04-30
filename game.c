@@ -170,6 +170,16 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 }
                 to = foundations[command.arguments[commandLength - 1] - '1'];
                 canMove = canMoveToFoundation(moving, to);
+
+                int cardsInFoundation = 0;
+                for (int i = 0; i < 4; i++) {
+                    cardsInFoundation += foundations[i]->size;
+                }
+                // If all 52 cards are in the foundations, the game is finished
+                if (cardsInFoundation == 51 && canMove) {
+                    game->phase = STARTUP;
+                    return "You won!";
+                }
             }
 
             if (!canMove) {
