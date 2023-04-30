@@ -4,7 +4,7 @@
 #include "commands.h"
 #include "card.h"
 
-#define COMMAND_COUNT 8
+#define COMMAND_COUNT 9
 
 bool commandCanTakeArguments(CommandName name) {
     return (name == LD || name == SI || name == SD);
@@ -22,6 +22,7 @@ Command parseCommand(char* commandString) {
     commandStrings[5] = "QQ";
     commandStrings[6] = "P";
     commandStrings[7] = "Q";
+    commandStrings[8] = "AUTO";
 
     int inputLength = strlen(commandString);
     for (int i = 0; i < COMMAND_COUNT; i++) {
@@ -171,6 +172,7 @@ char* commandToString(Command command) {
     commandStrings[6] = "QQ";
     commandStrings[7] = "P";
     commandStrings[8] = "Q";
+    commandStrings[9] = "AUTO";
 
     char* commandName = commandStrings[command.name];
     char* stringRepresentation;
