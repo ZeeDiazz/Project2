@@ -325,6 +325,7 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             return "OK";
         case Q:
             game->phase = STARTUP;
+            // TODO empty the move stack
             return "OK";
         // Unknown command
         default:
