@@ -5,6 +5,24 @@
 #include "moveValidation.h"
 #include "file.h"
 
+/* PRIVATE METHODS */
+void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations);
+void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations) {       
+    // Empty the columns before putting more stuff into them
+    for (int i = 0; i < 7; i++) {
+        emptyList(columns[i]);
+    }
+    // Empty the foundations as well
+    for (int i = 0; i < 4; i++) {
+        emptyList(foundations[i]);
+    }
+
+    // Add the cards
+    for (int i = 0; i < 52; i++) {
+        addCard(columns[i % 7], deck[i]);
+    }
+}
+
 bool canUseCommand(GamePhase phase, Command command) {
     if (command.name == QQ || command.error != NO_ERROR) {
         return true;
@@ -78,36 +96,27 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             else {
                 game->deck = makeDeck();
             }
-
-            
-            // Empty the columns before putting more stuff into them
-            for (int i = 0; i < 7; i++) {
-                emptyList(columns[i]);
-            }
-            // Empty the foundations as well
-            for (int i = 0; i < 4; i++) {
-                emptyList(foundations[i]);
-            }
-
-            // Add the cards
-            for (int i = 0; i < 52; i++) {
-                addCard(columns[i % 7], game->deck[i]);
-            }
+            showDeck(game->deck, columns, foundations);
             return "OK";
         case SW:
-            for (int columnIndex = 0; columnIndex < 7; columnIndex++) {
-                LinkedList* column = columns[columnIndex];
-                Node* node = column->head;
-                for (int i = 0; i < column->size; i++) {
-                    node->card.seen = true;
-                    node = node->next;
-                }
+            if (game->deck == NULL) {
+                return "No deck";
             }
+            for (int i = 0; i < 52; i++) {
+                game->deck[i].seen = true;
+            }
+            showDeck(game->deck, columns, foundations);
             return "OK";
         case SI:
+            if (game->deck == NULL) {
+                return "No deck";
+            }
             // shuffle the cards
             return "OK";
         case SR:
+            if (game->deck == NULL) {
+                return "No deck";
+            }
             // shuffle the cards
             return "OK";
         case SD:
