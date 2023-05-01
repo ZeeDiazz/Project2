@@ -9,6 +9,7 @@ bool commandCanTakeArguments(CommandName name) {
 }
 
 Command parseCommand(char* commandString) {
+    printf("Command string: %s\n", commandString);
     Command command = {UNKNOWN, NO_ERROR, false, NULL};
 
     char* commandStrings[COMMAND_COUNT];
@@ -24,7 +25,8 @@ Command parseCommand(char* commandString) {
     commandStrings[RESTART] = "RESTART";
 
     int inputLength = strlen(commandString);
-    for (int i = 0; i < COMMAND_COUNT; i++) {
+    // has to be count - 1, because move is not identified by it's name
+    for (int i = 0; i < COMMAND_COUNT - 1; i++) {
         char* checkingName = commandStrings[i];
         if (checkingName == NULL) {
             continue;
@@ -79,6 +81,7 @@ Command parseCommand(char* commandString) {
 
 
 Command makeGameMoveCommand(char* potentialMove) {
+    printf("Making move command\n");
     Command command = {MOVE, NO_ERROR, true, potentialMove};
 
     int expectedArrowIndex;
@@ -152,6 +155,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         return command;
     }
     
+    printf("Correctly handling parsing\n");
     return command;
 }
 

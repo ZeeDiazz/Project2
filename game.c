@@ -32,6 +32,7 @@ bool canUseCommand(GamePhase phase, Command command) {
                 case Q:
                 case AUTO:
                 case MOVE:
+                case RESTART:
                     return true;
                 default:
                     return false;
@@ -113,25 +114,26 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             char* filename = (command.hasArguments) ? command.arguments : "cards.txt";
             saveDeckToFile(filename, game->deck);
             return "OK";
+        // TODO can make use of perform command?
         case AUTO:
             bool movedSomething;
 
             do {
                 movedSomething = false;
-                for (int i = 0; i < 7; i++) {
-                    LinkedList* column = columns[i];
+                for (int columnIndex = 0; columnIndex < 7; columnIndex++) {
+                    LinkedList* column = columns[columnIndex];
                     if (column->size == 0) {
                         continue;
                     }
                     Card bottomCard = getCardAt(column, column->size - 1);
 
-                    for (int j = 0; j < 4; j++) {
-                        MoveError error = canMoveToFoundation(bottomCard, foundations[j]);
+                    for (int foundationIndex = 0; foundationIndex < 4; foundationIndex++) {
+                        MoveError error = canMoveToFoundation(bottomCard, foundations[foundationIndex]);
                         if (error == NONE) {
                             // Move the card, and mark it as seen
                             bottomCard.seen = true;
                             removeCard(column, bottomCard);
-                            addCard(foundations[j], bottomCard);
+                            addCard(foundations[foundationIndex], bottomCard);
                             movedSomething = true;
 
                             if (column->size > 0) {
@@ -157,6 +159,17 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 return "You won!";
             }
             return "OK";
+        case RESTART:
+            if (game->deck == NULL) {
+                // TODO undo until at start
+                break;
+            }
+            else {
+                Command quit = {Q, NO_ERROR, false, NULL};
+                performCommand(game, quit, columns, foundations);
+                Command play = {P, NO_ERROR, false, NULL};
+                return performCommand(game, play, columns, foundations);
+            }
         case MOVE:
             LinkedList *from, *to;
             Card moving;
