@@ -12,7 +12,9 @@ typedef enum CommandName {
     P,
     Q,
     AUTO,
+    RESTART,
     MOVE,
+    COMMAND_COUNT,
 } CommandName;
 
 typedef enum CommandError {

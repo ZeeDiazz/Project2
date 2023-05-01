@@ -4,8 +4,6 @@
 #include "commands.h"
 #include "card.h"
 
-#define COMMAND_COUNT 9
-
 bool commandCanTakeArguments(CommandName name) {
     return (name == LD || name == SI || name == SD);
 }
@@ -14,22 +12,26 @@ Command parseCommand(char* commandString) {
     Command command = {UNKNOWN, NO_ERROR, false, NULL};
 
     char* commandStrings[COMMAND_COUNT];
-    commandStrings[0] = "LD";
-    commandStrings[1] = "SW";
-    commandStrings[2] = "SI";
-    commandStrings[3] = "SR";
-    commandStrings[4] = "SD";
-    commandStrings[5] = "QQ";
-    commandStrings[6] = "P";
-    commandStrings[7] = "Q";
-    commandStrings[8] = "AUTO";
+    commandStrings[LD] = "LD";
+    commandStrings[SW] = "SW";
+    commandStrings[SI] = "SI";
+    commandStrings[SR] = "SR";
+    commandStrings[SD] = "SD";
+    commandStrings[QQ] = "QQ";
+    commandStrings[P] = "P";
+    commandStrings[Q] = "Q";
+    commandStrings[AUTO] = "AUTO";
+    commandStrings[RESTART] = "RESTART";
 
     int inputLength = strlen(commandString);
     for (int i = 0; i < COMMAND_COUNT; i++) {
         char* checkingName = commandStrings[i];
+        if (checkingName == NULL) {
+            continue;
+        }
         int checkingLength = strlen(checkingName);
         if (strncmp(commandString, checkingName, checkingLength) == 0) {
-            command.name = (CommandName)i+1;
+            command.name = (CommandName)i;
             break;
         }
     }
@@ -44,7 +46,7 @@ Command parseCommand(char* commandString) {
         return makeGameMoveCommand(commandString);
     }
 
-    int commandNameLength = strlen(commandStrings[command.name - 1]);
+    int commandNameLength = strlen(commandStrings[command.name]);
     int argumentLength = inputLength - commandNameLength - 1;
     if (argumentLength > 0) {
         // Command is not valid if it cannot take arguments, and the command is longer than the name
@@ -162,17 +164,19 @@ char* commandToString(Command command) {
         return "";
     }
 
-    char* commandStrings[COMMAND_COUNT + 1];
-    commandStrings[0] = "???";
-    commandStrings[1] = "LD";
-    commandStrings[2] = "SW";
-    commandStrings[3] = "SI";
-    commandStrings[4] = "SR";
-    commandStrings[5] = "SD";
-    commandStrings[6] = "QQ";
-    commandStrings[7] = "P";
-    commandStrings[8] = "Q";
-    commandStrings[9] = "AUTO";
+    char* commandStrings[COMMAND_COUNT];
+    commandStrings[UNKNOWN] = "???";
+    commandStrings[LD] = "LD";
+    commandStrings[SW] = "SW";
+    commandStrings[SI] = "SI";
+    commandStrings[SR] = "SR";
+    commandStrings[SD] = "SD";
+    commandStrings[QQ] = "QQ";
+    commandStrings[P] = "P";
+    commandStrings[Q] = "Q";
+    commandStrings[AUTO] = "AUTO";
+    commandStrings[RESTART] = "RESTART";
+    commandStrings[MOVE] = "MOVE";
 
     char* commandName = commandStrings[command.name];
     char* stringRepresentation;
