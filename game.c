@@ -120,6 +120,9 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
             // shuffle the cards
             return "OK";
         case SD:
+            if (game->deck == NULL) {
+                return "No deck";
+            }
             char* filename = (command.hasArguments) ? command.arguments : "cards.txt";
             saveDeckToFile(filename, game->deck);
             return "OK";
