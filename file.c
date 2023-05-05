@@ -92,7 +92,10 @@ void saveDeckToFile(char* filename, Card* cards) {
     char* cardsText = malloc(3 * 52);
     int textIndex = 0;
     for (int i = 0; i < 52; i++) {
+        bool wasSeen = cards[i].seen;
+        cards[i].seen = true;
         char* cardText = cardToString(cards[i]);
+        cards[i].seen = wasSeen;
         for (int j = 0; j < 2; j++) {
             cardsText[textIndex++] = cardText[j];
         }
