@@ -23,66 +23,63 @@ Card* makeDeck() {
     return cards;
 }
 
-char* cardToString(Card card) {
+char* cardToString(Card card, bool respectVisibility) {
     char* string;
-    int stringLength;
 
     if (card.suit < 1 || card.suit > 4 || card.value < 1 || card.value > 13) {
-        stringLength = 0;
         // save space for NULL
         string = malloc(1);
+        string[0] = '\0';
+        return string;
     }
-    else {
-        stringLength = 2;
-        string = malloc(2 + 1);
-        if (card.seen) {
-            switch (card.value)
-            {
-                case Ace:
-                    string[0] = 'A';
-                    break;
-                case Ten:
-                    string[0] = 'T';
-                    break;
-                case Jack:
-                    string[0] = 'J';
-                    break;
-                case Queen:
-                    string[0] = 'Q';
-                    break;
-                case King:
-                    string[0] = 'K';
-                    break;
-                default:
-                    string[0] = card.value + '0';
-                    break;
-            }
-            switch (card.suit)
-            {
-                case Clubs:
-                    string[1] = 'C';
-                    break;
-                case Diamonds:
-                    string[1] = 'D';
-                    break;
-                case Hearts:
-                    string[1] = 'H';
-                    break;
-                case Spades:
-                    string[1] = 'S';
-                    break;
-                default:
-                    string[1] = '?';
-                    break;
-            }
-        }
-        else {
-            string[0] = '[';
-            string[1] = ']';
-        }
+    string = malloc(2 + 1);
+    if (!card.seen && respectVisibility) {
+        string[0] = '[';
+        string[1] = ']';
+        string[2] = '\0';
+        return string;
     }
 
-    string[stringLength] = '\0';
+    switch (card.value)
+    {
+        case Ace:
+            string[0] = 'A';
+            break;
+        case Ten:
+            string[0] = 'T';
+            break;
+        case Jack:
+            string[0] = 'J';
+            break;
+        case Queen:
+            string[0] = 'Q';
+            break;
+        case King:
+            string[0] = 'K';
+            break;
+        default:
+            string[0] = card.value + '0';
+            break;
+    }
+    switch (card.suit)
+    {
+        case Clubs:
+            string[1] = 'C';
+            break;
+        case Diamonds:
+            string[1] = 'D';
+            break;
+        case Hearts:
+            string[1] = 'H';
+            break;
+        case Spades:
+            string[1] = 'S';
+            break;
+        default:
+            string[1] = '?';
+            break;
+    }
+    string[2] = '\0';
     return string;
 }
 

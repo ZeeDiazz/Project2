@@ -45,6 +45,7 @@ int main() {
         }
 
         message = performCommand(&game, lastCommand, columns, foundations);
+        printf("%s\n", message);
     }
 
     printf("\nProgram terminated\n");

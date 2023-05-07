@@ -39,5 +39,5 @@ typedef struct Card {
  */
 Card* makeDeck();
 
-char* cardToString(Card card);
+char* cardToString(Card card, bool respectVisibility);
 Card stringToCard(char* string);
