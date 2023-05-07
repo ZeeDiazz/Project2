@@ -13,5 +13,6 @@ typedef struct MoveStack {
 
 MoveStack* addMove(MoveStack* head, char* move);
 MoveStack* removeMove(MoveStack* head);
+MoveStack* makeEmpty(MoveStack* head);
 char* getMove(MoveStack* head);
 bool isEmpty(MoveStack* head);
