@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "shuffleDeck.h"
 /** This method is for the command SI.
  * It shuffles the deck, by dividing the cards in two piles and mixing them together.
@@ -33,11 +34,9 @@ void shuffleInterleaved(LinkedList* list, int splitIndex){
 
     // If the cards are unevenly divided in piles, then add the last card
     if (list->size > 0) {
-        addCard(shuffledPile,getCardAt(list,0));
-        removeCard(list, getCardAt(list,0));
+        addList(shuffledPile, list);
     } else {
-        addCard(shuffledPile,getCardAt(secondPile,0));
-        removeCard(secondPile, getCardAt(secondPile,0));
+        addList(shuffledPile, secondPile);
     }
     //At this point list is empty, and we can now add shuffledPile
     addList(list,shuffledPile);
