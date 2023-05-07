@@ -5,6 +5,7 @@
 #include "moveValidation.h"
 #include "file.h"
 #include "board.h"
+#include "shuffleDeck.h"
 
 /* PRIVATE METHODS */
 void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations);
@@ -110,13 +111,45 @@ char* performCommand(GameState* game, Command command) {
             if (!hasDeck(game->board)) {
                 return "No deck";
             }
-            // shuffle the cards
+            int splitIndex;
+            if (command.hasArguments) {
+                splitIndex = command.arguments[0] - '0';
+                if (strlen(command.arguments) == 2) {
+                    splitIndex *= 10;
+                    splitIndex += command.arguments[1] - '0';
+                }
+            }
+            else {
+                splitIndex = rand() % 52;
+            }
+
+            LinkedList* shuffledInterleaved = makeEmptyList();
+            for (int i = 0; i < 52; i++) {
+                addCard(shuffledInterleaved, game->board->deck[i]);
+            }
+            shuffleInterleaved(shuffledInterleaved, splitIndex);
+            Card* interleavedDeck = malloc(52 * sizeof(Card));
+            for (int i = 0; i < 52; i++) {
+                interleavedDeck[i] = getCardAt(shuffledInterleaved, 0);
+                removeCard(shuffledInterleaved, interleavedDeck[i]);
+            }
+            setDeck(game->board, interleavedDeck);
             return "OK";
         case SR:
             if (!hasDeck(game->board)) {
                 return "No deck";
             }
-            // shuffle the cards
+            LinkedList* randomlyShuffled = makeEmptyList();
+            for (int i = 0; i < 52; i++) {
+                addCard(randomlyShuffled, game->board->deck[i]);
+            }
+            shuffleRandom(randomlyShuffled);
+            Card* randomDeck = malloc(52 * sizeof(Card));
+            for (int i = 0; i < 52; i++) {
+                randomDeck[i] = getCardAt(randomlyShuffled, 0);
+                removeCard(randomlyShuffled, randomDeck[i]);
+            }
+            setDeck(game->board, randomDeck);
             return "OK";
         case SD:
             if (!hasDeck(game->board)) {

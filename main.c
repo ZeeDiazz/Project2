@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "card.h"
 #include "cli.h"
 #include "commands.h"
@@ -11,6 +12,8 @@
 #include "shuffleDeck.h"
 
 int main() {
+    // Seed the random generation with the current time
+    srand(time(NULL));
     GameState game = {STARTUP, 0, 0, makeBoard(), NULL};
     LinkedList** columns = malloc(7 * sizeof(LinkedList*));
     for (int i = 0; i < 7; i++) {
