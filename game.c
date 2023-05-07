@@ -127,25 +127,24 @@ char* performCommand(GameState* game, Command command) {
             return "OK";
         // TODO can make use of perform command?
         case AUTO:
-            /*
             bool movedSomething;
 
             do {
                 movedSomething = false;
                 for (int columnIndex = 0; columnIndex < 7; columnIndex++) {
-                    LinkedList* column = columns[columnIndex];
+                    LinkedList* column = game->board->columns[columnIndex];
                     if (column->size == 0) {
                         continue;
                     }
                     Card bottomCard = getCardAt(column, column->size - 1);
 
                     for (int foundationIndex = 0; foundationIndex < 4; foundationIndex++) {
-                        MoveError error = canMoveToFoundation(bottomCard, foundations[foundationIndex]);
+                        MoveError error = canMoveToFoundation(bottomCard, game->board->foundations[foundationIndex]);
                         if (error == NONE) {
                             // Move the card, and mark it as seen
                             bottomCard.seen = true;
                             removeCard(column, bottomCard);
-                            addCard(foundations[foundationIndex], bottomCard);
+                            addCard(game->board->foundations[foundationIndex], bottomCard);
                             movedSomething = true;
 
                             if (column->size > 0) {
@@ -163,13 +162,13 @@ char* performCommand(GameState* game, Command command) {
 
             int cardsInFoundation = 0;
             for (int i = 0; i < 4; i++) {
-                cardsInFoundation += foundations[i]->size;
+                cardsInFoundation += game->board->foundations[i]->size;
             }
             // If all 52 cards are in the foundations, the game is finished
             if (cardsInFoundation == 52) {
                 game->phase = STARTUP;
                 return "You won!";
-            }*/
+            }
             return "OK";
         case RESTART:
             Command quit = {Q, NO_ERROR, false, NULL};
