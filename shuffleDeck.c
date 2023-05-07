@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "shuffleDeck.h"
 /** This method is for the command SI.
  * It shuffles the deck, by dividing the cards in two piles and mixing them together.
@@ -41,6 +42,29 @@ void shuffleInterleaved(LinkedList* list, int splitIndex){
     //At this point list is empty, and we can now add shuffledPile
     addList(list,shuffledPile);
 }
+
+/** SR command
+ * To shuffle the deck randomly
+ * @author ZeeDiazz (Zaid)
+ * @param list
+ */
 void shuffleRandom(LinkedList* list){
 
+    //start with an empty list
+    LinkedList * shuffledPile =makeEmptyList();
+
+    while (list->size > 0){
+
+        //A random int from 0 to list.size
+        int randomIndex = rand() % list->size;
+
+        //Add that card
+        addCard(shuffledPile, getCardAt(list,randomIndex));
+
+        //remove the added card from list
+        removeCard(list,getCardAt(list,randomIndex));
+    }
+
+    // add shuffledPile to an empty list
+    addList(list, shuffledPile);
 }
