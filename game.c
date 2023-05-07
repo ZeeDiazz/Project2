@@ -161,44 +161,31 @@ char* performCommand(GameState* game, Command command) {
         // TODO can make use of perform command?
         case AUTO:
             bool movedSomething;
+            char* moveCommand = malloc(6 + 1);
+
+            moveCommand[0] = 'C';
+            moveCommand[2] = '-';
+            moveCommand[3] = '>';
+            moveCommand[4] = 'F';
+            moveCommand[6] = '\0';
 
             do {
                 movedSomething = false;
                 for (int columnIndex = 0; columnIndex < 7; columnIndex++) {
-                    LinkedList* column = game->board->columns[columnIndex];
-                    if (column->size == 0) {
-                        continue;
-                    }
-                    Card bottomCard = getCardAt(column, column->size - 1);
-
+                    moveCommand[1] = columnIndex + '1';
                     for (int foundationIndex = 0; foundationIndex < 4; foundationIndex++) {
-                        MoveError error = canMoveToFoundation(bottomCard, game->board->foundations[foundationIndex]);
+                        moveCommand[5] = foundationIndex + '1';
+                        // Literally just try the move
+                        MoveError error = performMove(game->board, makeGameMoveCommand(moveCommand));
                         if (error == NONE) {
-                            // Move the card, and mark it as seen
-                            bottomCard.seen = true;
-                            removeCard(column, bottomCard);
-                            addCard(game->board->foundations[foundationIndex], bottomCard);
                             movedSomething = true;
-
-                            if (column->size > 0) {
-                                // Get the new bottom card, to mark it as seen
-                                bottomCard = getCardAt(column, column->size - 1);
-                                removeCard(column, bottomCard);
-                                bottomCard.seen = true;
-                                addCard(column, bottomCard);
-                            }
-                            break;
                         }
                     }
                 }
             } while (movedSomething);
+            free(moveCommand);
 
-            int cardsInFoundation = 0;
-            for (int i = 0; i < 4; i++) {
-                cardsInFoundation += game->board->foundations[i]->size;
-            }
-            // If all 52 cards are in the foundations, the game is finished
-            if (cardsInFoundation == 52) {
+            if (allCardsInFoundation(game->board)) {
                 game->phase = STARTUP;
                 return "You won!";
             }

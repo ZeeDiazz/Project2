@@ -48,7 +48,6 @@ int main() {
         }
 
         message = performCommand(&game, lastCommand);
-        printf("%s\n", message);
     }
 
     printf("\nProgram terminated\n");
