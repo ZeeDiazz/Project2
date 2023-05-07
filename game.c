@@ -270,12 +270,9 @@ char* performCommand(Game* game, Command command, LinkedList** columns, LinkedLi
                 case FOUNDATION_ERROR:
                     return "The cards have to be in order when moving to the foundation";
                 default:
-                    return "Illegal move";
+                    return "This move is illegal";
             }
-            if (moveError != NONE) {
-                return "This move is illegal";
-            }
-
+            
             LinkedList* movingStack = splitList(from, movingIndex);
             addList(to, movingStack);
             
