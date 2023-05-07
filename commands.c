@@ -20,6 +20,8 @@ Command parseCommand(char* commandString) {
     commandStrings[QQ] = "QQ";
     commandStrings[P] = "P";
     commandStrings[Q] = "Q";
+    commandStrings[U] = "U";
+    commandStrings[R] = "R";
     commandStrings[AUTO] = "AUTO";
     commandStrings[RESTART] = "RESTART";
 

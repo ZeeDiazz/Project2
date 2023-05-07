@@ -11,6 +11,8 @@ typedef enum CommandName {
     QQ,
     P,
     Q,
+    U,
+    R,
     AUTO,
     RESTART,
     MOVE,
