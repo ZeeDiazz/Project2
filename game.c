@@ -6,6 +6,7 @@
 #include "file.h"
 #include "board.h"
 #include "shuffleDeck.h"
+#include "moveStack.h"
 
 /* PRIVATE METHODS */
 void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations);
@@ -176,8 +177,10 @@ char* performCommand(GameState* game, Command command) {
                     for (int foundationIndex = 0; foundationIndex < 4; foundationIndex++) {
                         moveCommand[5] = foundationIndex + '1';
                         // Literally just try the move
+
                         MoveError error = performMove(game->board, makeGameMoveCommand(moveCommand));
                         if (error == NONE) {
+                            game->moves = addMove(game->moves, moveCommand);
                             movedSomething = true;
                         }
                     }
@@ -233,8 +236,7 @@ char* performCommand(GameState* game, Command command) {
 
             game->totalMoves++;
             game->currentMove++;
-            // TODO
-            // addMove(game->moves, command.arguments);
+            game->moves = addMove(game->moves, command.arguments);
             return "OK";
         case QQ:
             game->phase = QUITTING;
@@ -248,7 +250,7 @@ char* performCommand(GameState* game, Command command) {
             return "OK";
         case Q:
             game->phase = STARTUP;
-            // TODO empty the move stack
+            game->moves = makeEmpty(game->moves);
             return "OK";
         // Unknown command
         default:
