@@ -12,11 +12,11 @@ char* inputText = "INPUT >";
 
 int columnWidth = 2 * 7 + 6;
 int foundationWidth = 2 + 1 + 2;
-void printBoard(LinkedList** columns, LinkedList** foundations, Command previousCommand, char* lastInput, char* message) {
+void printBoard(Board board, Command previousCommand, char* lastInput, char* message) {
     int rows = 7; // minimum 7
     for (int i = 0; i < 7; i++) {
-        if (columns[i]->size > rows) {
-            rows = columns[i]->size;
+        if (board.columns[i]->size > rows) {
+            rows = board.columns[i]->size;
         }
     }
     int columnsLength = rows * (columnWidth + 1);
@@ -31,15 +31,15 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
 
     int totalLength = strlen(top) + columnsLength + foundationsLength + 1 + commandLength + messageLength + inputLength;
 
-    char* board = malloc(totalLength * sizeof(char));
+    char* boardString = malloc(totalLength * sizeof(char));
 
     int index = 0;
     for (int i = 0; i < strlen(top); i++) {
-        board[index++] = top[i];
+        boardString[index++] = top[i];
     }
     for (int row = 0; row < rows; row++) {
         for (int column = 0; column < 7; column++) {
-            LinkedList* currentList = columns[column];
+            LinkedList* currentList = board.columns[column];
             char* cardString;
             if (row < currentList->size) {
                 Card card = getCardAt(currentList, row);
@@ -52,57 +52,57 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
                 cardString[1] = ' ';
                 cardString[2] = '\0';
             }
-            board[index++] = cardString[0];
-            board[index++] = cardString[1];
+            boardString[index++] = cardString[0];
+            boardString[index++] = cardString[1];
 
             free(cardString);
     
             if (column != 6) {
-                board[index++] = '\t';
+                boardString[index++] = '\t';
             }
         }
         if (row == 0 || row == 2 || row == 4 || row == 6) {
-            board[index++] = '\t';
-            board[index++] = '\t';
+            boardString[index++] = '\t';
+            boardString[index++] = '\t';
             int foundationIndex = row / 2;
-            LinkedList* foundation = foundations[foundationIndex];
+            LinkedList* foundation = board.foundations[foundationIndex];
             if (foundation->size == 0) {
-                board[index++] = '[';
-                board[index++] = ']';
+                boardString[index++] = '[';
+                boardString[index++] = ']';
             }
             else {
                 Card topCard = getCardAt(foundation, foundation->size - 1);
                 char* topCardString = cardToString(topCard, true);
-                board[index++] = topCardString[0];
-                board[index++] = topCardString[1];
+                boardString[index++] = topCardString[0];
+                boardString[index++] = topCardString[1];
             }
-            board[index++] = '\t';
-            board[index++] = 'F';
-            board[index++] = '1' + foundationIndex;
+            boardString[index++] = '\t';
+            boardString[index++] = 'F';
+            boardString[index++] = '1' + foundationIndex;
         }
-        board[index++] = '\n';
+        boardString[index++] = '\n';
     }
-    board[index++] = '\n';
+    boardString[index++] = '\n';
     for (int i = 0; i < strlen(commandText); i++) {
-        board[index++] = commandText[i];
+        boardString[index++] = commandText[i];
     }
     for (int i = 0; i < strlen(lastCommand); i++) {
-        board[index++] = lastCommand[i];
+        boardString[index++] = lastCommand[i];
     }
-    board[index++] = '\n';
+    boardString[index++] = '\n';
     for (int i = 0; i < strlen(messageText); i++) {
-        board[index++] = messageText[i];
+        boardString[index++] = messageText[i];
     }
     for (int i = 0; i < strlen(actualMessage); i++) {
-        board[index++] = actualMessage[i];
+        boardString[index++] = actualMessage[i];
     }
-    board[index++] = '\n';
+    boardString[index++] = '\n';
     for (int i = 0; i < strlen(inputText); i++) {
-        board[index++] = inputText[i];
+        boardString[index++] = inputText[i];
     }
-    board[index++] = '\0';
+    boardString[index++] = '\0';
     
-    printf("%s", board);
+    printf("%s", boardString);
 }
 
 char* getUserInput() {

@@ -11,7 +11,7 @@
 #include "shuffleDeck.h"
 
 int main() {
-    Game game = {STARTUP, 0, 0, NULL, NULL};
+    GameState game = {STARTUP, 0, 0, makeBoard(), NULL};
     LinkedList** columns = malloc(7 * sizeof(LinkedList*));
     for (int i = 0; i < 7; i++) {
         columns[i] = makeEmptyList();
@@ -27,7 +27,7 @@ int main() {
     char* userInput = NULL;
     char* message = NULL;
     while (game.phase != QUITTING) {
-        printBoard(columns, foundations, lastCommand, userInput, message);
+        printBoard(*game.board, lastCommand, userInput, message);
 
         if (userInput != NULL) {
             free(userInput);
@@ -44,7 +44,7 @@ int main() {
             continue;
         }
 
-        message = performCommand(&game, lastCommand, columns, foundations);
+        message = performCommand(&game, lastCommand);
         printf("%s\n", message);
     }
 

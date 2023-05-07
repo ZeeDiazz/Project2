@@ -11,6 +11,11 @@ typedef enum MoveError {
     EMPTY_FOUNDATION,
     COLUMN_ERROR,
     FOUNDATION_ERROR,
+
+    NO_CARDS,
+    NO_MATCHES,
+    ONLY_ONE_CARD_TO_FOUNDATION,
+    NO_EFFECT,
 } MoveError;
 
 MoveError canMoveToColumn(Card moving, LinkedList* movingTo);

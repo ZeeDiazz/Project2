@@ -5,6 +5,7 @@
 #include "moveStack.h"
 #include "commands.h"
 #include "linkedList.h"
+#include "board.h"
 
 typedef enum GamePhase
 {
@@ -15,15 +16,15 @@ typedef enum GamePhase
 } GamePhase;
 
 
-typedef struct Game
+typedef struct GameState
 {
     GamePhase phase;
     int totalMoves;
     int currentMove;
-    Card* deck;
+    Board* board;
     MoveStack* moves;
-} Game;
+} GameState;
 
 
 bool canUseCommand(GamePhase phase, Command command);
-char* performCommand(Game* game, Command command, LinkedList** columns, LinkedList** foundations);
+char* performCommand(GameState* game, Command command);

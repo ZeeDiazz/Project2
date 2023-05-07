@@ -17,11 +17,14 @@ Board* makeBoard(Card* deck) {
 }
 
 void setDeck(Board* board, Card* deck) {
-    // If the board already had a deck, then free this deck
-    if (board->deck != NULL) {
+    if (hasDeck(board)) {
         free(board->deck);
     }
     board->deck = deck;
+}
+
+bool hasDeck(Board* board) {
+    return !(board->deck == NULL);
 }
 
 void emptyBoard(Board* board) {
@@ -45,7 +48,7 @@ void showAll(Board* board) {
 
 void showcaseMode(Board* board) {
     emptyBoard(board);
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 52; i++) {
         addCard(board->columns[i % 7], board->deck[i]);
     }
 }
@@ -56,11 +59,11 @@ void playMode(Board* board) {
     addCard(board->columns[0], board->deck[0]);
 
     int rowCount = 0;
-    int columnIndex = 1;
+    int columnIndex = -1;
     int deckIndex = 1;
     while (deckIndex < 52) {
         columnIndex++;
-        if (columnIndex > 6) {
+        if (columnIndex > 5) {
             columnIndex = 0;
             rowCount++;
         }
@@ -68,20 +71,101 @@ void playMode(Board* board) {
         if (rowCount > (columnIndex + 5)) {
             continue;
         }
-        board->deck[deckIndex].seen = (rowCount < columnIndex);
+        board->deck[deckIndex].seen = (rowCount > columnIndex);
         addCard(board->columns[columnIndex + 1], board->deck[deckIndex]);
 
         deckIndex++;
     }
+}
 
-    for (int i = 0; i < 51; i++) {
-        int columnIndex = (i % 6) + 1;
-        int cardsInColumn = (i / 6);
-        if (cardsInColumn > (columnIndex + 5)) {
-            continue;
-        }
-
-        board->deck[i + 1].seen = (cardsInColumn < columnIndex);
-        addCard(board->columns[(i % 6) + 1], board->deck[i + 1]);
+MoveError performMove(Board* board, Command command) {
+    LinkedList *from, *to;
+    Card moving;
+    MoveError moveError;
+    // Find the place we are moving from
+    if (command.arguments[0] == 'C') {
+        from = board->columns[command.arguments[1] - '1'];
     }
+    else {
+        from = board->foundations[command.arguments[1] - '1'];
+    }
+
+    if (from->size == 0) {
+        return NO_CARDS;
+    }
+
+    int movingIndex;
+    int commandLength = strlen(command.arguments);
+
+    if (commandLength == 6) {
+        // Move the very last card
+        movingIndex = from->size - 1;
+
+    }
+    else {
+        char* commandCardString = malloc(3);
+        commandCardString[0] = command.arguments[3];
+        commandCardString[1] = command.arguments[4];
+        commandCardString[2] = '\0';
+        Card commandCard = stringToCard(commandCardString);
+        free(commandCardString);
+        movingIndex = getCardIndex(from, commandCard);
+        // If the card could not be found in the from column/foundation
+        if (movingIndex == -1) {
+            return NO_MATCHES;
+        }
+    }
+
+    moving = getCardAt(from, movingIndex);
+    // If the card hasn't been seen yet, pretend it isn't in the column/foundation
+    if (!moving.seen) {
+        return NO_MATCHES;
+    }
+
+    if (command.arguments[commandLength - 2] == 'C') {
+        to = board->columns[command.arguments[commandLength - 1] - '1'];
+        moveError = canMoveToColumn(moving, to);
+    }
+    else {
+        // Can only move to foundation a single card at a time
+        if (movingIndex != from->size - 1) {
+            return ONLY_ONE_CARD_TO_FOUNDATION;
+        }
+        to = board->foundations[command.arguments[commandLength - 1] - '1'];
+        moveError = canMoveToFoundation(moving, to);
+
+        int cardsInFoundation = 0;
+        for (int i = 0; i < 4; i++) {
+            cardsInFoundation += board->foundations[i]->size;
+        }
+    }
+
+    if (to == from) {
+        return NO_EFFECT;
+    }
+
+    if (moveError != NONE) {
+        return moveError;
+    }
+    
+    LinkedList* movingStack = splitList(from, movingIndex);
+    addList(to, movingStack);
+    
+    // If there are cards left in the from column
+    if (from->size > 0) {
+        Node* temp = from->head;
+        for (int i = 0; i < from->size - 1; i++) {
+            temp = temp->next;
+        }
+        temp->card.seen = true;
+    }
+    return NONE;
+}
+
+bool allCardsInFoundation(Board* board) {
+    int cardsInFoundation = 0;
+    for (int i = 0; i < 4; i++) {
+        cardsInFoundation += board->foundations[i]->size;
+    }
+    return cardsInFoundation == 52;
 }
