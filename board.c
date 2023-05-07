@@ -3,7 +3,7 @@
 
 Board* makeBoard(Card* deck) {
     Board* board = malloc(sizeof(Board));
-    board->deck = deck;
+    board->deck = NULL;
     board->columns = malloc(sizeof(Board*) * 7);
     for (int i = 0; i < 7; i++) {
         board->columns[i] = makeEmptyList();
@@ -14,6 +14,14 @@ Board* makeBoard(Card* deck) {
     }
 
     return board;
+}
+
+void setDeck(Board* board, Card* deck) {
+    // If the board already had a deck, then free this deck
+    if (board->deck != NULL) {
+        free(board->deck);
+    }
+    board->deck = deck;
 }
 
 void emptyBoard(Board* board) {
