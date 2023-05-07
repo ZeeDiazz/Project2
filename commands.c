@@ -9,7 +9,6 @@ bool commandCanTakeArguments(CommandName name) {
 }
 
 Command parseCommand(char* commandString) {
-    printf("Command string: %s\n", commandString);
     Command command = {UNKNOWN, NO_ERROR, false, NULL};
 
     char* commandStrings[COMMAND_COUNT];
@@ -64,13 +63,14 @@ Command parseCommand(char* commandString) {
     }
 
     if (command.hasArguments && command.error == NO_ERROR) {
-        command.arguments = malloc(argumentLength);
+        command.arguments = malloc(argumentLength + 1);
         if (command.hasArguments) {
             int argumentOffset = strlen(commandString) - argumentLength;
             for (int i = 0; i < argumentLength; i++) {
                 command.arguments[i] = commandString[i + argumentOffset];
             }
         }
+        command.arguments[argumentLength] = '\0';
     }
     else {
         command.arguments = NULL;
@@ -81,7 +81,6 @@ Command parseCommand(char* commandString) {
 
 
 Command makeGameMoveCommand(char* potentialMove) {
-    printf("Making move command\n");
     Command command = {MOVE, NO_ERROR, true, potentialMove};
 
     int expectedArrowIndex;
@@ -154,8 +153,6 @@ Command makeGameMoveCommand(char* potentialMove) {
         command.error = MALFORMED;
         return command;
     }
-    
-    printf("Correctly handling parsing\n");
     return command;
 }
 

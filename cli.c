@@ -43,7 +43,7 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
             char* cardString;
             if (row < currentList->size) {
                 Card card = getCardAt(currentList, row);
-                cardString = cardToString(card);
+                cardString = cardToString(card, true);
             }
             else {
                 // Empty card
@@ -72,7 +72,7 @@ void printBoard(LinkedList** columns, LinkedList** foundations, Command previous
             }
             else {
                 Card topCard = getCardAt(foundation, foundation->size - 1);
-                char* topCardString = cardToString(topCard);
+                char* topCardString = cardToString(topCard, true);
                 board[index++] = topCardString[0];
                 board[index++] = topCardString[1];
             }

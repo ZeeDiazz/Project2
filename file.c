@@ -33,11 +33,19 @@ FileAssessment readDeckFromFile(char *filename) {
     while (fgets(line, BUFFER_SIZE, pFile) != NULL && cardCounter < 52) {
         currentCard = stringToCard(line);
         // If cards is in a wrong card format
-        if (currentCard.value == NULL || currentCard.suit == NULL) {
-            
-            char errorLine[BUFFER_SIZE];
+        if (currentCard.value == 0 || currentCard.suit == 0) {
+            char errorLine[BUFFER_SIZE] = "There was a card with the wrong card format on line ";
 
-            sprintf(errorLine, "There was a card with the wrong card format on line %d", cardCounter + 1);
+            int onesValue = (cardCounter + 1) % 10;
+            int tensValue = (cardCounter + 1) / 10;
+
+            int numberIndex = 52;
+            if (tensValue > 0) {
+                errorLine[numberIndex++] = tensValue + '0';
+            }
+            errorLine[numberIndex++] = onesValue + '0';
+
+            // sprintf(errorLine, "There was a card with the wrong card format on line %d", cardCounter + 1);
 
             assessment.statusCode = WRONGCARDFORMAT;
             assessment.errorMessage = errorLine;
@@ -92,7 +100,10 @@ void saveDeckToFile(char* filename, Card* cards) {
     char* cardsText = malloc(3 * 52);
     int textIndex = 0;
     for (int i = 0; i < 52; i++) {
-        char* cardText = cardToString(cards[i]);
+        bool wasSeen = cards[i].seen;
+        cards[i].seen = true;
+        char* cardText = cardToString(cards[i], false);
+        cards[i].seen = wasSeen;
         for (int j = 0; j < 2; j++) {
             cardsText[textIndex++] = cardText[j];
         }
