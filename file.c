@@ -130,8 +130,8 @@ void saveGame(char *filename, GameState gameState) {
 
     MoveStack *currentMove = gameState.moves;
     while (currentMove != NULL) {
-        printf("Saving move\n");
         fputs(currentMove->move, file);
+        fputs("\n", file);
         currentMove = currentMove->next;
     }
     fclose(file);
@@ -177,6 +177,7 @@ LoadInfo loadFromFile(char *filename) {
         actualMove[strlen(moveToRedo) - 2] = '\0';
         performCommand(&gameState, makeGameMoveCommand(actualMove));
         moveStack = removeMove(moveStack);
+        free(actualMove);
     }
 
     loadInfo.gameState = gameState;

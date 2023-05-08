@@ -41,6 +41,7 @@ bool canUseCommand(GamePhase phase, Command command) {
                 case SR:
                 case SD:
                 case P:
+                case L:
                     return true;
                 default:
                     return false;
@@ -290,6 +291,22 @@ char *performCommand(GameState *game, Command command) {
         case S:
             saveGame(command.arguments, *game);
             return "OK";
+
+        case L:
+
+            LoadInfo loadInfo = loadFromFile(command.arguments);
+            if (loadInfo.statusCode != SUCCESS) {
+                return loadInfo.errorMessage;
+            }
+            game->board = loadInfo.gameState.board;
+            game->moves = loadInfo.gameState.moves;
+            game->phase = loadInfo.gameState.phase;
+            game->currentMove = loadInfo.gameState.currentMove;
+            game->totalMoves = loadInfo.gameState.totalMoves;
+            game->undoneMoves = loadInfo.gameState.undoneMoves;
+
+            return "OK";
+
             // Unknown command
         default:
             return "Unknown command";

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "stdbool.h"
 
 typedef enum CommandName {
@@ -14,6 +15,7 @@ typedef enum CommandName {
     U,
     R,
     S,
+    L,
     AUTO,
     RESTART,
     MOVE,
@@ -32,10 +34,13 @@ typedef struct Command {
     CommandName name;
     CommandError error;
     bool hasArguments;
-    char* arguments;
+    char *arguments;
 } Command;
 
 bool commandCanTakeArguments(CommandName name);
-Command parseCommand(char* command);
-Command makeGameMoveCommand(char* potentialMove);
-char* commandToString(Command command);
+
+Command parseCommand(char *command);
+
+Command makeGameMoveCommand(char *potentialMove);
+
+char *commandToString(Command command);

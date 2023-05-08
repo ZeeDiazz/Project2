@@ -5,7 +5,7 @@
 #include "card.h"
 
 bool commandCanTakeArguments(CommandName name) {
-    return (name == LD || name == SI || name == SD || name == S);
+    return (name == LD || name == SI || name == SD || name == S || name == L);
 }
 
 Command parseCommand(char *commandString) {
@@ -23,12 +23,13 @@ Command parseCommand(char *commandString) {
     commandStrings[U] = "U";
     commandStrings[R] = "R";
     commandStrings[S] = "S";
+    commandStrings[L] = "L";
     commandStrings[AUTO] = "AUTO";
     commandStrings[RESTART] = "RESTART";
 
     int inputLength = strlen(commandString);
     // has to be count - 1, because move is not identified by it's name
-    for (int i = 0; i < COMMAND_COUNT - 1; i++) {
+    for (int i = 1; i < COMMAND_COUNT - 1; i++) {
         char *checkingName = commandStrings[i];
         if (checkingName == NULL) {
             continue;
@@ -59,7 +60,7 @@ Command parseCommand(char *commandString) {
         } else if (command.error == NO_ERROR) {
             command.error = TOO_MANY_ARGUMENTS;
         }
-    } else if (command.name == S) {
+    } else if (command.name == S || command.name == L) {
         command.error = TOO_FEW_ARGUMENTS;
         return command;
     } else {
@@ -178,6 +179,7 @@ char *commandToString(Command command) {
     commandStrings[U] = "U";
     commandStrings[R] = "R";
     commandStrings[S] = "S";
+    commandStrings[L] = "L";
     commandStrings[AUTO] = "AUTO";
     commandStrings[RESTART] = "RESTART";
     commandStrings[MOVE] = "MOVE";
