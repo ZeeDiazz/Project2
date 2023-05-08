@@ -9,8 +9,9 @@
 #include "moveStack.h"
 
 /* PRIVATE METHODS */
-void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations);
-void showDeck(Card* deck, LinkedList** columns, LinkedList** foundations) {       
+void showDeck(Card *deck, LinkedList **columns, LinkedList **foundations);
+
+void showDeck(Card *deck, LinkedList **columns, LinkedList **foundations) {
     // Empty the columns before putting more stuff into them
     for (int i = 0; i < 7; i++) {
         emptyList(columns[i]);
@@ -31,11 +32,9 @@ bool canUseCommand(GamePhase phase, Command command) {
         return true;
     }
 
-    switch (phase)
-    {
+    switch (phase) {
         case STARTUP:
-            switch (command.name)
-            {
+            switch (command.name) {
                 case LD:
                 case SW:
                 case SI:
@@ -48,11 +47,11 @@ bool canUseCommand(GamePhase phase, Command command) {
             }
             break;
         case PLAYING:
-            switch (command.name)
-            {
+            switch (command.name) {
                 case Q:
                 case U:
                 case R:
+                case S:
                 case AUTO:
                 case MOVE:
                 case RESTART:
@@ -67,9 +66,8 @@ bool canUseCommand(GamePhase phase, Command command) {
     return false; // should never reach
 }
 
-char* performCommand(GameState* game, Command command) {
-    switch (command.error)
-    {
+char *performCommand(GameState *game, Command command) {
+    switch (command.error) {
         case NO_ERROR:
             break;
         case WRONG_TIME:
@@ -84,21 +82,18 @@ char* performCommand(GameState* game, Command command) {
             return "Invalid command";
     }
 
-    switch (command.name)
-    {
+    switch (command.name) {
         case LD:
             if (command.hasArguments) {
                 FileAssessment assessment = readDeckFromFile(command.arguments);
-                switch (assessment.statusCode)
-                {
+                switch (assessment.statusCode) {
                     case SUCCESS:
                         setDeck(game->board, assessment.deck);
                         break;
                     default:
                         return assessment.errorMessage;
                 }
-            }
-            else {
+            } else {
                 setDeck(game->board, makeDeck());
             }
             showcaseMode(game->board);
@@ -121,17 +116,16 @@ char* performCommand(GameState* game, Command command) {
                     splitIndex *= 10;
                     splitIndex += command.arguments[1] - '0';
                 }
-            }
-            else {
+            } else {
                 splitIndex = rand() % 52;
             }
 
-            LinkedList* shuffledInterleaved = makeEmptyList();
+            LinkedList *shuffledInterleaved = makeEmptyList();
             for (int i = 0; i < 52; i++) {
                 addCard(shuffledInterleaved, game->board->deck[i]);
             }
             shuffleInterleaved(shuffledInterleaved, splitIndex);
-            Card* interleavedDeck = malloc(52 * sizeof(Card));
+            Card *interleavedDeck = malloc(52 * sizeof(Card));
             for (int i = 0; i < 52; i++) {
                 interleavedDeck[i] = getCardAt(shuffledInterleaved, 0);
                 removeCard(shuffledInterleaved, interleavedDeck[i]);
@@ -142,12 +136,12 @@ char* performCommand(GameState* game, Command command) {
             if (!hasDeck(game->board)) {
                 return "No deck";
             }
-            LinkedList* randomlyShuffled = makeEmptyList();
+            LinkedList *randomlyShuffled = makeEmptyList();
             for (int i = 0; i < 52; i++) {
                 addCard(randomlyShuffled, game->board->deck[i]);
             }
             shuffleRandom(randomlyShuffled);
-            Card* randomDeck = malloc(52 * sizeof(Card));
+            Card *randomDeck = malloc(52 * sizeof(Card));
             for (int i = 0; i < 52; i++) {
                 randomDeck[i] = getCardAt(randomlyShuffled, 0);
                 removeCard(randomlyShuffled, randomDeck[i]);
@@ -158,13 +152,13 @@ char* performCommand(GameState* game, Command command) {
             if (!hasDeck(game->board)) {
                 return "No deck";
             }
-            char* filename = (command.hasArguments) ? command.arguments : "cards.txt";
+            char *filename = (command.hasArguments) ? command.arguments : "cards.txt";
             saveDeckToFile(filename, game->board->deck);
             return "OK";
-        // TODO can make use of perform command?
+            // TODO can make use of perform command?
         case AUTO:
             bool movedSomething;
-            char* moveCommand = malloc(6 + 1);
+            char *moveCommand = malloc(6 + 1);
 
             moveCommand[0] = 'C';
             moveCommand[2] = '-';
@@ -184,7 +178,7 @@ char* performCommand(GameState* game, Command command) {
                             movedSomething = true;
                             game->undoneMoves = makeEmpty(game->undoneMoves);
 
-                            char* moveInfo = malloc(strlen(moveCommand) + 2 + 1);
+                            char *moveInfo = malloc(strlen(moveCommand) + 2 + 1);
                             for (int i = 0; i < strlen(moveCommand); i++) {
                                 moveInfo[i] = moveCommand[i];
                             }
@@ -210,8 +204,7 @@ char* performCommand(GameState* game, Command command) {
             return performCommand(game, play);
         case MOVE:
             MoveInfo moveInfoCode = performMove(game->board, command);
-            switch (moveInfoCode)
-                {
+            switch (moveInfoCode) {
                 case NONE:
                 case SHOWED_CARD:
                     break;
@@ -248,7 +241,7 @@ char* performCommand(GameState* game, Command command) {
             game->totalMoves++;
             game->currentMove++;
             game->undoneMoves = makeEmpty(game->undoneMoves);
-            char* moveInfo = malloc(strlen(command.arguments) + 2 + 1);
+            char *moveInfo = malloc(strlen(command.arguments) + 2 + 1);
             for (int i = 0; i < strlen(command.arguments); i++) {
                 moveInfo[i] = command.arguments[i];
             }
@@ -275,7 +268,7 @@ char* performCommand(GameState* game, Command command) {
             if (isEmpty(game->moves)) {
                 return "Cannot undo";
             }
-            char* moveToUndo = getMove(game->moves);
+            char *moveToUndo = getMove(game->moves);
             performUndo(game->board, moveToUndo);
             game->undoneMoves = addMove(game->undoneMoves, moveToUndo);
             game->moves = removeMove(game->moves);
@@ -284,8 +277,8 @@ char* performCommand(GameState* game, Command command) {
             if (isEmpty(game->undoneMoves)) {
                 return "Cannot redo";
             }
-            char* moveToRedo = getMove(game->undoneMoves);
-            char* actualMove = malloc(strlen(moveToRedo) - 2 + 1);
+            char *moveToRedo = getMove(game->undoneMoves);
+            char *actualMove = malloc(strlen(moveToRedo) - 2 + 1);
             for (int i = 0; i < strlen(moveToRedo) - 2; i++) {
                 actualMove[i] = moveToRedo[i];
             }
@@ -294,7 +287,10 @@ char* performCommand(GameState* game, Command command) {
             game->moves = addMove(game->moves, moveToRedo);
             game->undoneMoves = removeMove(game->undoneMoves);
             return "OK";
-        // Unknown command
+        case S:
+            saveGame(command.arguments, *game);
+            return "OK";
+            // Unknown command
         default:
             return "Unknown command";
     }

@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include "file.h"
 #include <stdbool.h>
+#include <string.h>
 
 #define BUFFER_SIZE 255
+
 /**
  * 
  * @param filename Filename of the file containing the cards that needs to be read
@@ -95,21 +97,6 @@ FileAssessment readDeckFromFile(char *filename) {
     return assessment;
 }
 
-void saveMoveStackToFile(char *filename, MoveStack firstMove) {
-    FILE *file = fopen(filename, "a");
-    if (file == NULL) {
-        return;
-    }
-
-    MoveStack currentMove = firstMove;
-    while (currentMove.move != NULL) {
-        fputs(currentMove.move, file);
-        currentMove = *currentMove.next;
-    }
-
-
-}
-
 void saveDeckToFile(char *filename, Card *cards) {
     FILE *file = fopen(filename, "w+");
     char *cardsText = malloc(3 * 52);
@@ -129,4 +116,68 @@ void saveDeckToFile(char *filename, Card *cards) {
     fputs(cardsText, file);
     free(cardsText);
     fclose(file);
+}
+
+/*void saveGame(char *filename, GameState gameState) {
+
+
+    saveDeckToFile(filename, gameState.board->deck);
+
+    FILE *file = fopen(filename, "a");
+    if (file == NULL) {
+        return;
+    }
+
+    MoveStack *currentMove = gameState.moves;
+    while (currentMove->move != NULL) {
+        fputs(currentMove->move, file);
+        currentMove = currentMove->next;
+    }
+}*/
+
+
+LoadInfo loadFromFile(char *filename) {
+    LoadInfo loadInfo;
+
+    FileAssessment fileAssessment = readDeckFromFile(filename);
+
+    if (fileAssessment.statusCode != SUCCESS) {
+        loadInfo.errorMessage = fileAssessment.errorMessage;
+        loadInfo.statusCode = fileAssessment.statusCode;
+        return loadInfo;
+    }
+
+    GameState gameState = {PLAYING, 0, 0, makeBoard(), NULL, NULL};
+
+    setDeck(gameState.board, fileAssessment.deck);
+
+
+    FILE *pFile = fopen(filename, "r");
+    char line[BUFFER_SIZE];
+
+    int lineCounter = 0;
+    MoveStack *moveStack;
+    while (fgets(line, BUFFER_SIZE, pFile) != NULL) {
+        if (lineCounter < 52) {
+            lineCounter++;
+            continue;
+        }
+        moveStack = addMove(moveStack, line);
+        lineCounter++;
+    }
+
+    while (!isEmpty(moveStack)) {
+        char *moveToRedo = getMove(moveStack);
+        char *actualMove = malloc(strlen(moveToRedo) - 2 + 1);
+        for (int i = 0; i < strlen(moveToRedo) - 2; i++) {
+            actualMove[i] = moveToRedo[i];
+        }
+        actualMove[strlen(moveToRedo) - 2] = '\0';
+        performCommand(&gameState, makeGameMoveCommand(actualMove));
+        moveStack = removeMove(moveStack);
+    }
+
+    loadInfo.gameState = gameState;
+    return loadInfo;
+
 }

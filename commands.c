@@ -5,13 +5,13 @@
 #include "card.h"
 
 bool commandCanTakeArguments(CommandName name) {
-    return (name == LD || name == SI || name == SD);
+    return (name == LD || name == SI || name == SD || name == S);
 }
 
-Command parseCommand(char* commandString) {
+Command parseCommand(char *commandString) {
     Command command = {UNKNOWN, NO_ERROR, false, NULL};
 
-    char* commandStrings[COMMAND_COUNT];
+    char *commandStrings[COMMAND_COUNT];
     commandStrings[LD] = "LD";
     commandStrings[SW] = "SW";
     commandStrings[SI] = "SI";
@@ -22,19 +22,20 @@ Command parseCommand(char* commandString) {
     commandStrings[Q] = "Q";
     commandStrings[U] = "U";
     commandStrings[R] = "R";
+    commandStrings[S] = "S";
     commandStrings[AUTO] = "AUTO";
     commandStrings[RESTART] = "RESTART";
 
     int inputLength = strlen(commandString);
     // has to be count - 1, because move is not identified by it's name
     for (int i = 0; i < COMMAND_COUNT - 1; i++) {
-        char* checkingName = commandStrings[i];
+        char *checkingName = commandStrings[i];
         if (checkingName == NULL) {
             continue;
         }
         int checkingLength = strlen(checkingName);
         if (strncmp(commandString, checkingName, checkingLength) == 0) {
-            command.name = (CommandName)i;
+            command.name = (CommandName) i;
             break;
         }
     }
@@ -55,12 +56,13 @@ Command parseCommand(char* commandString) {
         // Command is not valid if it cannot take arguments, and the command is longer than the name
         if (commandCanTakeArguments(command.name)) {
             command.hasArguments = true;
-        }
-        else if (command.error == NO_ERROR) {
+        } else if (command.error == NO_ERROR) {
             command.error = TOO_MANY_ARGUMENTS;
         }
-    }
-    else {
+    } else if (command.name == S) {
+        command.error = TOO_FEW_ARGUMENTS;
+        return command;
+    } else {
         argumentLength = 0;
     }
 
@@ -73,8 +75,7 @@ Command parseCommand(char* commandString) {
             }
         }
         command.arguments[argumentLength] = '\0';
-    }
-    else {
+    } else {
         command.arguments = NULL;
     }
 
@@ -82,7 +83,7 @@ Command parseCommand(char* commandString) {
 }
 
 
-Command makeGameMoveCommand(char* potentialMove) {
+Command makeGameMoveCommand(char *potentialMove) {
     Command command = {MOVE, NO_ERROR, true, potentialMove};
 
     int expectedArrowIndex;
@@ -96,7 +97,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         }
 
         if (potentialMove[2] == ':') {
-            char* card = malloc(3);
+            char *card = malloc(3);
             card[0] = potentialMove[3];
             card[1] = potentialMove[4];
             card[2] = '\0';
@@ -107,12 +108,11 @@ Command makeGameMoveCommand(char* potentialMove) {
                 command.error = MALFORMED;
             }
             expectedArrowIndex = 5;
-        }
-        else {
+        } else {
             expectedArrowIndex = 2;
         }
     }
-    // Check if move is from a foundation
+        // Check if move is from a foundation
     else if (potentialMove[0] == 'F') {
         bool tooLow = (potentialMove[1] - '1' < 0);
         bool tooHigh = (potentialMove[1] - '4' > 0);
@@ -122,7 +122,7 @@ Command makeGameMoveCommand(char* potentialMove) {
         }
         expectedArrowIndex = 2;
     }
-    // If it's not a column or a foundation
+        // If it's not a column or a foundation
     else {
         command.error = MALFORMED;
         return command;
@@ -142,23 +142,21 @@ Command makeGameMoveCommand(char* potentialMove) {
             command.error = MALFORMED;
             return command;
         }
-    }
-    else if (potentialMove[movingToIndex] == 'F') {
+    } else if (potentialMove[movingToIndex] == 'F') {
         bool tooLow = (potentialMove[movingToIndex + 1] - '1' < 0);
         bool tooHigh = (potentialMove[movingToIndex + 1] - '4' > 0);
         if (tooLow || tooHigh) {
             command.error = MALFORMED;
             return command;
         }
-    }
-    else {
+    } else {
         command.error = MALFORMED;
         return command;
     }
     return command;
 }
 
-char* commandToString(Command command) {
+char *commandToString(Command command) {
     if (command.name == MOVE) {
         return (command.error == NO_ERROR) ? command.arguments : "MOVE";
     }
@@ -167,7 +165,7 @@ char* commandToString(Command command) {
         return "";
     }
 
-    char* commandStrings[COMMAND_COUNT];
+    char *commandStrings[COMMAND_COUNT];
     commandStrings[UNKNOWN] = "???";
     commandStrings[LD] = "LD";
     commandStrings[SW] = "SW";
@@ -183,8 +181,8 @@ char* commandToString(Command command) {
     commandStrings[RESTART] = "RESTART";
     commandStrings[MOVE] = "MOVE";
 
-    char* commandName = commandStrings[command.name];
-    char* stringRepresentation;
+    char *commandName = commandStrings[command.name];
+    char *stringRepresentation;
     int stringLength = strlen(commandName);
 
     if (command.hasArguments && command.error == NO_ERROR) {
@@ -204,7 +202,7 @@ char* commandToString(Command command) {
         for (int i = 0; i < strlen(command.arguments); i++) {
             stringRepresentation[currentIndex] = command.arguments[i];
             currentIndex++;
-        }    
+        }
     }
     stringRepresentation[stringLength] = '\0';
     return stringRepresentation;

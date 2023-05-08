@@ -1,8 +1,11 @@
 // @author Zigalow
 
 #pragma once
+
 #include "card.h"
 #include "moveStack.h"
+#include "game.h"
+
 /**
  * @author Zigalow
  */
@@ -11,7 +14,8 @@ typedef enum StatusCode {
     DUPLICATE,
     WRONGCARDFORMAT,
     FILENOTFOUND,
-    MISSINGCARDS
+    MISSINGCARDS,
+    ERRORINMOVESTACK
 } StatusCode;
 
 
@@ -23,8 +27,14 @@ typedef enum StatusCode {
 typedef struct FileAssessment {
     StatusCode statusCode;
     char *errorMessage;
-    Card* deck;
+    Card *deck;
 } FileAssessment;
+
+typedef struct LoadInfo {
+    GameState gameState;
+    char *errorMessage;
+    StatusCode statusCode;
+} LoadInfo;
 
 /**
  * 
@@ -32,6 +42,9 @@ typedef struct FileAssessment {
  * @return Returns the FileAssessment of the file read
  */
 FileAssessment readDeckFromFile(char *filename);
-void saveDeckToFile(char* filename, Card* cards);
 
-void saveMoveStackToFile(char *filename, MoveStack moveStack);
+void saveDeckToFile(char *filename, Card *cards);
+
+void saveGame(char *filename, GameState gameState);
+
+LoadInfo loadFromFile(char *filename);
