@@ -10,7 +10,7 @@
  * @param filename Filename of the file containing the cards that needs to be read
  * @return Returns FileAssessment, which is determined by different factors when reading from file
  */
- 
+
 FileAssessment readDeckFromFile(char *filename) {
 
     FileAssessment assessment;
@@ -27,7 +27,7 @@ FileAssessment readDeckFromFile(char *filename) {
 
 
     Card currentCard;
-    Card* cards = malloc(52 * sizeof(Card)); // Deck that will be made
+    Card *cards = malloc(52 * sizeof(Card)); // Deck that will be made
     bool checkCards[4][13] = {{0}}; // Card-array for checking for duplicates
     int cardCounter = 0;
     while (fgets(line, BUFFER_SIZE, pFile) != NULL && cardCounter < 52) {
@@ -51,10 +51,10 @@ FileAssessment readDeckFromFile(char *filename) {
             assessment.errorMessage = errorLine;
             fclose(pFile);
             return assessment;
-            
+
             // If a cards has already been added to the cardArray : Duplicate
         } else if (checkCards[currentCard.suit - 1][currentCard.value - 1]) {
-            
+
             char errorLine[BUFFER_SIZE];
 
             sprintf(errorLine, "There was a duplicate card on line %d", cardCounter + 1);
@@ -73,7 +73,7 @@ FileAssessment readDeckFromFile(char *filename) {
 
     // If there wasn't enough cards to make a full deck
     if (cardCounter != 52) {
-        
+
         char errorLine[BUFFER_SIZE];
 
         sprintf(errorLine,
@@ -95,14 +95,29 @@ FileAssessment readDeckFromFile(char *filename) {
     return assessment;
 }
 
-void saveDeckToFile(char* filename, Card* cards) {
+void saveMoveStackToFile(char *filename, MoveStack firstMove) {
+    FILE *file = fopen(filename, "a");
+    if (file == NULL) {
+        return;
+    }
+
+    MoveStack currentMove = firstMove;
+    while (currentMove.move != NULL) {
+        fputs(currentMove.move, file);
+        currentMove = *currentMove.next;
+    }
+
+
+}
+
+void saveDeckToFile(char *filename, Card *cards) {
     FILE *file = fopen(filename, "w+");
-    char* cardsText = malloc(3 * 52);
+    char *cardsText = malloc(3 * 52);
     int textIndex = 0;
     for (int i = 0; i < 52; i++) {
         bool wasSeen = cards[i].seen;
         cards[i].seen = true;
-        char* cardText = cardToString(cards[i], false);
+        char *cardText = cardToString(cards[i], false);
         cards[i].seen = wasSeen;
         for (int j = 0; j < 2; j++) {
             cardsText[textIndex++] = cardText[j];
