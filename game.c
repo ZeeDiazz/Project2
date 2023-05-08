@@ -180,18 +180,21 @@ char* performCommand(GameState* game, Command command) {
                         moveCommand[5] = foundationIndex + '1';
                         // Literally just try the move
 
+                        printf("'%s'\n", moveCommand);
                         MoveInfo moveInfoCode = performMove(game->board, makeGameMoveCommand(moveCommand));
+                        printf("Move tried\n");
                         if (moveInfoCode == NONE || moveInfoCode == SHOWED_CARD) {
                             movedSomething = true;
                             game->undoneMoves = makeEmpty(game->undoneMoves);
 
-                            char* moveInfo = malloc(strlen(command.arguments) + 2 + 1);
-                            for (int i = 0; i < strlen(command.arguments); i++) {
-                                moveInfo[i] = command.arguments[i];
+                            char* moveInfo = malloc(strlen(moveCommand) + 2 + 1);
+                            for (int i = 0; i < strlen(moveCommand); i++) {
+                                printf("i: %d\n", i);
+                                moveInfo[i] = moveCommand[i];
                             }
-                            moveInfo[strlen(command.arguments)] = ' ';
-                            moveInfo[strlen(command.arguments) + 1] = moveInfoCode + '0';
-                            moveInfo[strlen(command.arguments) + 2] = '\0';
+                            moveInfo[strlen(moveCommand)] = ' ';
+                            moveInfo[strlen(moveCommand) + 1] = moveInfoCode + '0';
+                            moveInfo[strlen(moveCommand) + 2] = '\0';
                             game->moves = addMove(game->moves, moveInfo);
                         }
                     }
