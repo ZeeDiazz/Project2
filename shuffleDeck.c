@@ -52,22 +52,14 @@ void shuffleRandom(LinkedList* list){
     //start with an empty list
     LinkedList * shuffledPile =makeEmptyList();
 
-    while (list->size > 0) {
-        //A random int from 0 to list.size
-        int randomIndex;
 
-        if (shuffledPile->size == 0) {
-        randomIndex = 0;
-        } else {
-            randomIndex = rand() % (shuffledPile->size + 1);
-        }
-        //Add that card
-        //addCard(shuffledPile, getCardAt(list,randomIndex));
-        addCardIndex(shuffledPile, getCardAt(list,0),randomIndex);
+    int randomIndex = 0;
+    do {
+        addCardIndex(shuffledPile, getCardAt(list, 0),randomIndex);
+        removeCard(list, getCardAt(list, 0));
 
-        //remove the added card from list
-        removeCard(list,getCardAt(list,0));
-    }
-    // add shuffledPile to an empty list
+        randomIndex = rand() % (shuffledPile->size + 1);
+    } while (list->size > 0);
+        // add shuffledPile to an empty list
     addList(list, shuffledPile);
 }

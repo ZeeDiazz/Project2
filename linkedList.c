@@ -114,6 +114,13 @@ void addCardIndex(LinkedList* list, Card card, int index){
         list->size++;
         return;
     }
+    //edge case for index
+    if (index == 0) {
+        node->next = list->head;
+        list->head = node;
+        list->size++;
+        return;
+    }
 
     Node* current = list->head;
     for(int i = 1; i < index;i++) {
