@@ -98,6 +98,33 @@ void addList(LinkedList* list, LinkedList* addList) {
     addList->head = NULL;
     addList->size = 0;
 }
+/**
+ * add a new card at a specific index
+ * @param list
+ * @param card
+ * @param index
+ */
+void addCardIndex(LinkedList* list, Card card, int index){
+    Node* node = malloc(sizeof(Node));
+    node->card = card;
+    node->next = NULL; //Null since it's the last element
+
+    if (list->size == 0) {
+        list->head = node;
+        list->size++;
+        return;
+    }
+
+    Node* current = list->head;
+    for(int i = 0; i < list->size;i++) {
+        if(i == index) {
+            current = current->next;
+        }
+    }
+    node->next = current->next;
+    current->next = node;
+    list->size++;
+}
 
 /**
  * it splits a list into two, and returns the new splited list
