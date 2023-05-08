@@ -21,4 +21,5 @@ void showcaseMode(Board* board);
 void playMode(Board* board);
 
 MoveError performMove(Board* board, Command command);
+void performUndo(Board* board, Command commandToUndo);
 bool allCardsInFoundation(Board* board);

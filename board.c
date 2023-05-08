@@ -134,11 +134,6 @@ MoveError performMove(Board* board, Command command) {
         }
         to = board->foundations[command.arguments[commandLength - 1] - '1'];
         moveError = canMoveToFoundation(moving, to);
-
-        int cardsInFoundation = 0;
-        for (int i = 0; i < 4; i++) {
-            cardsInFoundation += board->foundations[i]->size;
-        }
     }
 
     if (to == from) {
@@ -161,6 +156,89 @@ MoveError performMove(Board* board, Command command) {
         temp->card.seen = true;
     }
     return NONE;
+}
+
+void forceMove(Board* board, Command command);
+void forceMove(Board* board, Command command) {
+    LinkedList *from, *to;
+    Card moving;
+
+    if (command.arguments[0] == 'C') {
+        from = board->columns[command.arguments[1] - '1'];
+    }
+    else {
+        from = board->foundations[command.arguments[1] - '1'];
+    }
+    
+    // If there are cards left in the from column
+    if (from->size > 0) {
+        Node* temp = from->head;
+        for (int i = 0; i < from->size - 1; i++) {
+            temp = temp->next;
+        }
+        temp->card.seen = true;
+    }
+
+    int movingIndex;
+    int commandLength = strlen(command.arguments);
+
+    if (commandLength == 6) {
+        // Move the very last card
+        movingIndex = from->size - 1;
+
+    }
+    else {
+        char* commandCardString = malloc(3);
+        commandCardString[0] = command.arguments[3];
+        commandCardString[1] = command.arguments[4];
+        commandCardString[2] = '\0';
+        Card commandCard = stringToCard(commandCardString);
+        free(commandCardString);
+        movingIndex = getCardIndex(from, commandCard);
+    }
+
+    if (command.arguments[commandLength - 2] == 'C') {
+        to = board->columns[command.arguments[commandLength - 1] - '1'];
+    }
+    else {
+        // Can only move to foundation a single card at a time
+        if (movingIndex != from->size - 1) {
+            return ONLY_ONE_CARD_TO_FOUNDATION;
+        }
+        to = board->foundations[command.arguments[commandLength - 1] - '1'];
+    }
+
+    LinkedList* movingStack = splitList(from, movingIndex);
+    addList(to, movingStack);
+}
+
+void performUndo(Board* board, Command commandToUndo) {
+    int reversedMoveLength;
+    char* reversedMove;
+
+    char* moveToUndo = commandToUndo.arguments;
+    int moveToUndoLength = strlen(moveToUndo);
+
+    if (moveToUndoLength == 6 || moveToUndo[4] == 'F') {
+        reversedMoveLength = 6;
+        reversedMove = malloc(reversedMoveLength + 1);
+    }
+    else {
+        reversedMoveLength = 9;
+        reversedMove = malloc(reversedMoveLength + 1);
+        reversedMove[2] = ':';
+        reversedMove[3] = moveToUndo[3];
+        reversedMove[4] = moveToUndo[4];
+    }
+
+    reversedMove[0] = moveToUndo[moveToUndoLength - 2];
+    reversedMove[1] = moveToUndo[moveToUndoLength - 1];
+    reversedMove[reversedMoveLength - 2] = moveToUndo[0];
+    reversedMove[reversedMoveLength - 1] = moveToUndo[1];
+    reversedMove[reversedMoveLength - 3] = moveToUndo[moveToUndoLength - 3];
+    reversedMove[reversedMoveLength - 4] = moveToUndo[moveToUndoLength - 4];
+
+    forceMove(board, makeGameMoveCommand(reversedMove));
 }
 
 bool allCardsInFoundation(Board* board) {

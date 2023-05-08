@@ -51,6 +51,8 @@ bool canUseCommand(GamePhase phase, Command command) {
             switch (command.name)
             {
                 case Q:
+                case U:
+                case R:
                 case AUTO:
                 case MOVE:
                 case RESTART:
@@ -251,6 +253,15 @@ char* performCommand(GameState* game, Command command) {
         case Q:
             game->phase = STARTUP;
             game->moves = makeEmpty(game->moves);
+            return "OK";
+        case U:
+            if (isEmpty(game->moves)) {
+                return "Cannot undo";
+            }
+            performUndo(game->board, makeGameMoveCommand(getMove(game->moves)));
+            game->moves = removeMove(game->moves);
+            return "OK";
+        case R:
             return "OK";
         // Unknown command
         default:
