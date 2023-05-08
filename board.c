@@ -230,6 +230,7 @@ void performUndo(Board* board, Command commandToUndo) {
         reversedMove[3] = moveToUndo[3];
         reversedMove[4] = moveToUndo[4];
     }
+    reversedMove[reversedMoveLength] = '\0';
 
     reversedMove[0] = moveToUndo[moveToUndoLength - 2];
     reversedMove[1] = moveToUndo[moveToUndoLength - 1];
