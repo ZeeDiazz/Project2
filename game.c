@@ -186,7 +186,6 @@ char* performCommand(GameState* game, Command command) {
 
                             char* moveInfo = malloc(strlen(moveCommand) + 2 + 1);
                             for (int i = 0; i < strlen(moveCommand); i++) {
-                                printf("i: %d\n", i);
                                 moveInfo[i] = moveCommand[i];
                             }
                             moveInfo[strlen(moveCommand)] = ' ';
