@@ -20,6 +20,6 @@ void showAll(Board* board);
 void showcaseMode(Board* board);
 void playMode(Board* board);
 
-MoveError performMove(Board* board, Command command);
-char* performUndo(Board* board, Command commandToUndo);
+MoveInfo performMove(Board* board, Command command);
+char* performUndo(Board* board, char* moveToUndo);
 bool allCardsInFoundation(Board* board);

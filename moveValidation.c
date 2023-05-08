@@ -2,7 +2,7 @@
 
 
 
-MoveError canMoveToColumn(Card moving, LinkedList* movingTo) {
+MoveInfo canMoveToColumn(Card moving, LinkedList* movingTo) {
     // If the column is empty only a king can be placed
     if (movingTo->size == 0) {
         return (moving.value == King) ? NONE : EMPTY_COLUMN;
@@ -15,7 +15,7 @@ MoveError canMoveToColumn(Card moving, LinkedList* movingTo) {
     return COLUMN_ERROR;
 }
 
-MoveError canMoveToFoundation(Card moving, LinkedList* movingTo) {
+MoveInfo canMoveToFoundation(Card moving, LinkedList* movingTo) {
     // If the foundation is empty, only an ace can be placed
     if (movingTo->size == 0) {
         return (moving.value == Ace) ? NONE : EMPTY_FOUNDATION;

@@ -180,11 +180,19 @@ char* performCommand(GameState* game, Command command) {
                         moveCommand[5] = foundationIndex + '1';
                         // Literally just try the move
 
-                        MoveError error = performMove(game->board, makeGameMoveCommand(moveCommand));
-                        if (error == NONE) {
-                            game->moves = addMove(game->moves, moveCommand);
+                        MoveInfo moveInfoCode = performMove(game->board, makeGameMoveCommand(moveCommand));
+                        if (moveInfoCode == NONE || moveInfoCode == SHOWED_CARD) {
                             movedSomething = true;
                             game->undoneMoves = makeEmpty(game->undoneMoves);
+
+                            char* moveInfo = malloc(strlen(command.arguments) + 2 + 1);
+                            for (int i = 0; i < strlen(command.arguments); i++) {
+                                moveInfo[i] = command.arguments[i];
+                            }
+                            moveInfo[strlen(command.arguments)] = ' ';
+                            moveInfo[strlen(command.arguments) + 1] = moveInfoCode + '0';
+                            moveInfo[strlen(command.arguments) + 2] = '\0';
+                            game->moves = addMove(game->moves, moveInfo);
                         }
                     }
                 }
@@ -202,10 +210,11 @@ char* performCommand(GameState* game, Command command) {
             Command play = {P, NO_ERROR, false, NULL};
             return performCommand(game, play);
         case MOVE:
-            MoveError moveError = performMove(game->board, command);
-            switch (moveError)
+            MoveInfo moveInfoCode = performMove(game->board, command);
+            switch (moveInfoCode)
                 {
                 case NONE:
+                case SHOWED_CARD:
                     break;
                 case SAME_SUIT:
                     return "Cannot move card onto another card of the same suit";
@@ -240,7 +249,14 @@ char* performCommand(GameState* game, Command command) {
             game->totalMoves++;
             game->currentMove++;
             game->undoneMoves = makeEmpty(game->undoneMoves);
-            game->moves = addMove(game->moves, command.arguments);
+            char* moveInfo = malloc(strlen(command.arguments) + 2 + 1);
+            for (int i = 0; i < strlen(command.arguments); i++) {
+                moveInfo[i] = command.arguments[i];
+            }
+            moveInfo[strlen(command.arguments)] = ' ';
+            moveInfo[strlen(command.arguments) + 1] = moveInfoCode + '0';
+            moveInfo[strlen(command.arguments) + 2] = '\0';
+            game->moves = addMove(game->moves, moveInfo);
             return "OK";
         case QQ:
             game->phase = QUITTING;
@@ -260,17 +276,24 @@ char* performCommand(GameState* game, Command command) {
             if (isEmpty(game->moves)) {
                 return "Cannot undo";
             }
-            char* undoMove = performUndo(game->board, makeGameMoveCommand(getMove(game->moves)));
+            char* moveToUndo = getMove(game->moves);
+            performUndo(game->board, moveToUndo);
+            game->undoneMoves = addMove(game->undoneMoves, moveToUndo);
             game->moves = removeMove(game->moves);
-            game->undoneMoves = addMove(game->undoneMoves, undoMove);
             return "OK";
         case R:
             if (isEmpty(game->undoneMoves)) {
                 return "Cannot redo";
             }
-            char* undoneMove = performUndo(game->board, makeGameMoveCommand(getMove(game->undoneMoves)));
+            char* moveToRedo = getMove(game->undoneMoves);
+            char* actualMove = malloc(strlen(moveToRedo) - 2 + 1);
+            for (int i = 0; i < strlen(moveToRedo) - 2; i++) {
+                actualMove[i] = moveToRedo[i];
+            }
+            actualMove[strlen(moveToRedo) - 2] = '\0';
+            performMove(game->board, makeGameMoveCommand(actualMove));
+            game->moves = addMove(game->moves, moveToRedo);
             game->undoneMoves = removeMove(game->undoneMoves);
-            game->moves = addMove(game->moves, undoneMove);
             return "OK";
         // Unknown command
         default:

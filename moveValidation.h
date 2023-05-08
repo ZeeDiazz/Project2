@@ -2,8 +2,9 @@
 #include "card.h"
 #include "linkedList.h"
 
-typedef enum MoveError {
+typedef enum MoveInfo {
     NONE = 0,
+    SHOWED_CARD,
     SAME_SUIT,
     SAME_COLOR, // not used currently
     DIFFERENT_SUIT,
@@ -16,7 +17,7 @@ typedef enum MoveError {
     NO_MATCHES,
     ONLY_ONE_CARD_TO_FOUNDATION,
     NO_EFFECT,
-} MoveError;
+} MoveInfo;
 
-MoveError canMoveToColumn(Card moving, LinkedList* movingTo);
-MoveError canMoveToFoundation(Card moving, LinkedList* movingTo);
+MoveInfo canMoveToColumn(Card moving, LinkedList* movingTo);
+MoveInfo canMoveToFoundation(Card moving, LinkedList* movingTo);

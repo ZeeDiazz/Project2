@@ -79,10 +79,10 @@ void playMode(Board* board) {
     }
 }
 
-MoveError performMove(Board* board, Command command) {
+MoveInfo performMove(Board* board, Command command) {
     LinkedList *from, *to;
     Card moving;
-    MoveError moveError;
+    MoveInfo moveError;
     // Find the place we are moving from
     if (command.arguments[0] == 'C') {
         from = board->columns[command.arguments[1] - '1'];
@@ -153,13 +153,19 @@ MoveError performMove(Board* board, Command command) {
         for (int i = 0; i < from->size - 1; i++) {
             temp = temp->next;
         }
-        temp->card.seen = true;
+        if (temp->card.seen) {
+            return NONE;
+        }
+        else {
+            temp->card.seen = true;
+            return SHOWED_CARD;
+        }
     }
     return NONE;
 }
 
-void forceMove(Board* board, Command command);
-void forceMove(Board* board, Command command) {
+void forceMove(Board* board, Command command, bool hideCard);
+void forceMove(Board* board, Command command, bool hideCard) {
     LinkedList *from, *to;
     Card moving;
 
@@ -168,15 +174,6 @@ void forceMove(Board* board, Command command) {
     }
     else {
         from = board->foundations[command.arguments[1] - '1'];
-    }
-    
-    // If there are cards left in the from column
-    if (from->size > 0) {
-        Node* temp = from->head;
-        for (int i = 0; i < from->size - 1; i++) {
-            temp = temp->next;
-        }
-        temp->card.seen = true;
     }
 
     int movingIndex;
@@ -207,17 +204,31 @@ void forceMove(Board* board, Command command) {
         }
         to = board->foundations[command.arguments[commandLength - 1] - '1'];
     }
+    // Set the correct visibility for the cards
+    if (to->size > 0) {
+        Node* temp = to->head;
+        for (int i = 0; i < to->size - 1; i++) {
+            temp = temp->next;
+        }
+        temp->card.seen = !hideCard;
+    }
 
     LinkedList* movingStack = splitList(from, movingIndex);
     addList(to, movingStack);
+    if (from->size > 0) {
+        Node* temp = from->head;
+        for (int i = 0; i < from->size - 1; i++) {
+            temp = temp->next;
+        }
+        temp->card.seen = true;
+    }
 }
 
-char* performUndo(Board* board, Command commandToUndo) {
+char* performUndo(Board* board, char* moveToUndo) {
     int reversedMoveLength;
     char* reversedMove;
 
-    char* moveToUndo = commandToUndo.arguments;
-    int moveToUndoLength = strlen(moveToUndo);
+    int moveToUndoLength = strlen(moveToUndo) - 2;
 
     if (moveToUndoLength == 6 || moveToUndo[4] == 'F') {
         reversedMoveLength = 6;
@@ -239,8 +250,20 @@ char* performUndo(Board* board, Command commandToUndo) {
     reversedMove[reversedMoveLength - 3] = moveToUndo[moveToUndoLength - 3];
     reversedMove[reversedMoveLength - 4] = moveToUndo[moveToUndoLength - 4];
 
-    forceMove(board, makeGameMoveCommand(reversedMove));
-    return reversedMove;
+    bool shouldHideCard = moveToUndo[moveToUndoLength + 1] == '1';
+
+    printf("Move: %s\nReversed: %s\n", moveToUndo, reversedMove);
+
+    forceMove(board, makeGameMoveCommand(reversedMove), shouldHideCard);
+    char* undoMove = malloc(strlen(moveToUndo) + 1);
+    for (int i = 0; i < reversedMoveLength; i++) {
+        undoMove[i] = reversedMove[i];
+    }
+    undoMove[strlen(moveToUndo) - 2] = ' ';
+    undoMove[strlen(moveToUndo) - 1] = !shouldHideCard + '0';
+    undoMove[strlen(moveToUndo)] = '\0';
+    printf("Move: %s\nUndo: %s\n", moveToUndo, undoMove);
+    return undoMove;
 }
 
 bool allCardsInFoundation(Board* board) {
