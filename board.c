@@ -212,7 +212,7 @@ void forceMove(Board* board, Command command) {
     addList(to, movingStack);
 }
 
-void performUndo(Board* board, Command commandToUndo) {
+char* performUndo(Board* board, Command commandToUndo) {
     int reversedMoveLength;
     char* reversedMove;
 
@@ -240,6 +240,7 @@ void performUndo(Board* board, Command commandToUndo) {
     reversedMove[reversedMoveLength - 4] = moveToUndo[moveToUndoLength - 4];
 
     forceMove(board, makeGameMoveCommand(reversedMove));
+    return reversedMove;
 }
 
 bool allCardsInFoundation(Board* board) {

@@ -23,6 +23,7 @@ typedef struct GameState
     int currentMove;
     Board* board;
     MoveStack* moves;
+    MoveStack* undoneMoves;
 } GameState;
 
 

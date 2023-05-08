@@ -184,6 +184,7 @@ char* performCommand(GameState* game, Command command) {
                         if (error == NONE) {
                             game->moves = addMove(game->moves, moveCommand);
                             movedSomething = true;
+                            game->undoneMoves = makeEmpty(game->undoneMoves);
                         }
                     }
                 }
@@ -238,6 +239,7 @@ char* performCommand(GameState* game, Command command) {
 
             game->totalMoves++;
             game->currentMove++;
+            game->undoneMoves = makeEmpty(game->undoneMoves);
             game->moves = addMove(game->moves, command.arguments);
             return "OK";
         case QQ:
@@ -258,10 +260,17 @@ char* performCommand(GameState* game, Command command) {
             if (isEmpty(game->moves)) {
                 return "Cannot undo";
             }
-            performUndo(game->board, makeGameMoveCommand(getMove(game->moves)));
+            char* undoMove = performUndo(game->board, makeGameMoveCommand(getMove(game->moves)));
             game->moves = removeMove(game->moves);
+            game->undoneMoves = addMove(game->undoneMoves, undoMove);
             return "OK";
         case R:
+            if (isEmpty(game->undoneMoves)) {
+                return "Cannot redo";
+            }
+            char* undoneMove = performUndo(game->board, makeGameMoveCommand(getMove(game->undoneMoves)));
+            game->undoneMoves = removeMove(game->undoneMoves);
+            game->moves = addMove(game->moves, undoneMove);
             return "OK";
         // Unknown command
         default:
