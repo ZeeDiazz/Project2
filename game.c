@@ -179,10 +179,7 @@ char* performCommand(GameState* game, Command command) {
                     for (int foundationIndex = 0; foundationIndex < 4; foundationIndex++) {
                         moveCommand[5] = foundationIndex + '1';
                         // Literally just try the move
-
-                        printf("'%s'\n", moveCommand);
                         MoveInfo moveInfoCode = performMove(game->board, makeGameMoveCommand(moveCommand));
-                        printf("Move tried\n");
                         if (moveInfoCode == NONE || moveInfoCode == SHOWED_CARD) {
                             movedSomething = true;
                             game->undoneMoves = makeEmpty(game->undoneMoves);
