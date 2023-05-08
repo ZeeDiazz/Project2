@@ -177,6 +177,7 @@ char *commandToString(Command command) {
     commandStrings[Q] = "Q";
     commandStrings[U] = "U";
     commandStrings[R] = "R";
+    commandStrings[S] = "S";
     commandStrings[AUTO] = "AUTO";
     commandStrings[RESTART] = "RESTART";
     commandStrings[MOVE] = "MOVE";

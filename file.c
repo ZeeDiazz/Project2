@@ -118,7 +118,7 @@ void saveDeckToFile(char *filename, Card *cards) {
     fclose(file);
 }
 
-/*void saveGame(char *filename, GameState gameState) {
+void saveGame(char *filename, GameState gameState) {
 
 
     saveDeckToFile(filename, gameState.board->deck);
@@ -129,11 +129,13 @@ void saveDeckToFile(char *filename, Card *cards) {
     }
 
     MoveStack *currentMove = gameState.moves;
-    while (currentMove->move != NULL) {
+    while (currentMove != NULL) {
+        printf("Saving move\n");
         fputs(currentMove->move, file);
         currentMove = currentMove->next;
     }
-}*/
+    fclose(file);
+}
 
 
 LoadInfo loadFromFile(char *filename) {
