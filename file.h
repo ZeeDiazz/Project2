@@ -2,6 +2,7 @@
 
 #pragma once
 #include "card.h"
+#include "moveStack.h"
 /**
  * @author Zigalow
  */
@@ -32,3 +33,5 @@ typedef struct FileAssessment {
  */
 FileAssessment readDeckFromFile(char *filename);
 void saveDeckToFile(char* filename, Card* cards);
+
+void saveMoveStackToFile(char *filename, MoveStack moveStack);
