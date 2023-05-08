@@ -59,7 +59,7 @@ void shuffleRandom(LinkedList* list){
         if (shuffledPile->size == 0) {
         randomIndex = 0;
         } else {
-            randomIndex = rand() % shuffledPile->size + 1;
+            randomIndex = rand() % shuffledPile->size;
         }
         //Add that card
         //addCard(shuffledPile, getCardAt(list,randomIndex));
