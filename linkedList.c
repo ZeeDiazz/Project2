@@ -116,10 +116,8 @@ void addCardIndex(LinkedList* list, Card card, int index){
     }
 
     Node* current = list->head;
-    for(int i = 0; i < list->size;i++) {
-        if(i == index) {
+    for(int i = 1; i < index;i++) {
             current = current->next;
-        }
     }
     node->next = current->next;
     current->next = node;
