@@ -78,7 +78,7 @@ char *performCommand(GameState *game, Command command) {
         case TOO_MANY_ARGUMENTS:
             return "Too many arguments";
         case TOO_FEW_ARGUMENTS:
-            return "Too few arguements";
+            return "Too few arguments";
         default:
             return "Invalid command";
     }
