@@ -40,6 +40,9 @@ int main() {
             continue;
         }
         for (int i = 0; i < strlen(userInput); i++) {
+            if (userInput[i] == ' ') {
+                break;
+            }
             userInput[i] = toupper(userInput[i]);
         }
 
