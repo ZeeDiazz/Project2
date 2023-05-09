@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "board.h"
 
 Board* makeBoard(Card* deck) {
@@ -198,10 +199,6 @@ void forceMove(Board* board, Command command, bool hideCard) {
         to = board->columns[command.arguments[commandLength - 1] - '1'];
     }
     else {
-        // Can only move to foundation a single card at a time
-        if (movingIndex != from->size - 1) {
-            return ONLY_ONE_CARD_TO_FOUNDATION;
-        }
         to = board->foundations[command.arguments[commandLength - 1] - '1'];
     }
     // Set the correct visibility for the cards

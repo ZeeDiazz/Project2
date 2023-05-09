@@ -104,8 +104,7 @@ Command makeGameMoveCommand(char *potentialMove) {
             card[2] = '\0';
             Card potentialCard = stringToCard(card);
             free(card);
-            // TODO don't make null check
-            if (potentialCard.suit == NULL || potentialCard.value == NULL) {
+            if (potentialCard.suit == 0 || potentialCard.value == 0) {
                 command.error = MALFORMED;
             }
             expectedArrowIndex = 5;
