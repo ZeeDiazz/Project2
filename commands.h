@@ -10,6 +10,7 @@ typedef enum CommandName {
     SR,
     SD,
     QQ,
+    RESTART,
     P,
     Q,
     U,
@@ -17,7 +18,6 @@ typedef enum CommandName {
     S,
     L,
     AUTO,
-    RESTART,
     MOVE,
     COMMAND_COUNT,
 } CommandName;
