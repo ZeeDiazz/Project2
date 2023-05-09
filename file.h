@@ -31,9 +31,8 @@ typedef struct FileAssessment {
 } FileAssessment;
 
 typedef struct LoadInfo {
-    GameState gameState;
-    char *errorMessage;
     StatusCode statusCode;
+    char *errorMessage;
 } LoadInfo;
 
 /**
@@ -47,4 +46,4 @@ void saveDeckToFile(char *filename, Card *cards);
 
 void saveGame(char *filename, GameState gameState);
 
-LoadInfo loadFromFile(char *filename);
+LoadInfo loadFromFile(char *filename, GameState* gameState);

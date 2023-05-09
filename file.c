@@ -119,8 +119,6 @@ void saveDeckToFile(char *filename, Card *cards) {
 }
 
 void saveGame(char *filename, GameState gameState) {
-
-
     saveDeckToFile(filename, gameState.board->deck);
 
     FILE *file = fopen(filename, "a");
@@ -137,9 +135,8 @@ void saveGame(char *filename, GameState gameState) {
     fclose(file);
 }
 
-
-LoadInfo loadFromFile(char *filename) {
-    LoadInfo loadInfo;
+LoadInfo loadFromFile(char *filename, GameState* gameState) {
+    LoadInfo loadInfo = {SUCCESS, ""};
 
     FileAssessment fileAssessment = readDeckFromFile(filename);
 
@@ -148,26 +145,30 @@ LoadInfo loadFromFile(char *filename) {
         loadInfo.statusCode = fileAssessment.statusCode;
         return loadInfo;
     }
-
-    GameState gameState = {PLAYING, 0, 0, makeBoard(), NULL, NULL};
-
-    setDeck(gameState.board, fileAssessment.deck);
-
+    setDeck(gameState->board, fileAssessment.deck);
 
     FILE *pFile = fopen(filename, "r");
     char line[BUFFER_SIZE];
 
     int lineCounter = 0;
-    MoveStack *moveStack;
+    MoveStack *moveStack = NULL;
     while (fgets(line, BUFFER_SIZE, pFile) != NULL) {
+        lineCounter++;
         if (lineCounter < 52) {
-            lineCounter++;
             continue;
         }
-        moveStack = addMove(moveStack, line);
-        lineCounter++;
-    }
 
+        char* move = malloc(strlen(line));
+        for (int i = 0; i < strlen(line) - 1; i++) {
+            move[i] = line[i];
+        }
+        move[strlen(line) - 1] = '\0';
+        moveStack = addMove(moveStack, move);
+    }
+    fclose(pFile);
+
+    performCommand(gameState, (Command){Q, NO_ERROR, false, NULL});
+    performCommand(gameState, (Command){P, NO_ERROR, false, NULL});
     while (!isEmpty(moveStack)) {
         char *moveToRedo = getMove(moveStack);
         char *actualMove = malloc(strlen(moveToRedo) - 2 + 1);
@@ -175,12 +176,10 @@ LoadInfo loadFromFile(char *filename) {
             actualMove[i] = moveToRedo[i];
         }
         actualMove[strlen(moveToRedo) - 2] = '\0';
-        performCommand(&gameState, makeGameMoveCommand(actualMove));
+        performCommand(gameState, makeGameMoveCommand(actualMove));
         moveStack = removeMove(moveStack);
         free(actualMove);
     }
 
-    loadInfo.gameState = gameState;
     return loadInfo;
-
 }

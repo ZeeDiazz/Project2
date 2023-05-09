@@ -294,20 +294,13 @@ char *performCommand(GameState *game, Command command) {
 
         case L:
 
-            LoadInfo loadInfo = loadFromFile(command.arguments);
+            LoadInfo loadInfo = loadFromFile(command.arguments, game);
             if (loadInfo.statusCode != SUCCESS) {
+                printf("Some kind of error\n");
                 return loadInfo.errorMessage;
             }
-            game->board = loadInfo.gameState.board;
-            game->moves = loadInfo.gameState.moves;
-            game->phase = loadInfo.gameState.phase;
-            game->currentMove = loadInfo.gameState.currentMove;
-            game->totalMoves = loadInfo.gameState.totalMoves;
-            game->undoneMoves = loadInfo.gameState.undoneMoves;
-
             return "OK";
-
-            // Unknown command
+        // Unknown command
         default:
             return "Unknown command";
     }
