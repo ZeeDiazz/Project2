@@ -39,6 +39,10 @@ int main() {
         if (userInput == NULL) {
             continue;
         }
+
+        if (lastCommand.name == LD && lastCommand.error == NONE) {
+            free(message);
+        }
         // TODO make parse better (take the current phase?)
         lastCommand = parseCommand(userInput);
         if (!canUseCommand(game.phase, lastCommand)) {

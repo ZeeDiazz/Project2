@@ -14,8 +14,8 @@
  */
 
 FileAssessment readDeckFromFile(char *filename) {
-
     FileAssessment assessment;
+    char* error;
 
     FILE *pFile = fopen(filename, "r");
     char line[BUFFER_SIZE];
@@ -23,7 +23,12 @@ FileAssessment readDeckFromFile(char *filename) {
     // If provided with the wrong filename
     if (pFile == NULL) {
         assessment.statusCode = FILENOTFOUND;
-        assessment.errorMessage = "Wrong filepath/Couldn't load the file with the give filename";
+        error = "Wrong filepath/Couldn't load the file with the give filename";
+        assessment.errorMessage = malloc(strlen(error) + 1);
+        for (int i = 0; i < strlen(error); i++) {
+            assessment.errorMessage[i] = error[i];
+        }
+        assessment.errorMessage[strlen(error)] = '\0';
         return assessment;
     }
 
@@ -36,33 +41,49 @@ FileAssessment readDeckFromFile(char *filename) {
         currentCard = stringToCard(line);
         // If cards is in a wrong card format
         if (currentCard.value == 0 || currentCard.suit == 0) {
-            char errorLine[BUFFER_SIZE] = "There was a card with the wrong card format on line ";
+            error = "There was a card with the wrong card format on line ";
 
             int onesValue = (cardCounter + 1) % 10;
             int tensValue = (cardCounter + 1) / 10;
 
+            assessment.errorMessage = malloc(strlen(error) + 1 + (tensValue > 0) + 1);
+            for (int i = 0; i < strlen(error); i++) {
+                assessment.errorMessage[i] = error[i];
+            }
+
             int numberIndex = 52;
             if (tensValue > 0) {
-                errorLine[numberIndex++] = tensValue + '0';
+                assessment.errorMessage[numberIndex++] = tensValue + '0';
             }
-            errorLine[numberIndex++] = onesValue + '0';
+            assessment.errorMessage[numberIndex++] = onesValue + '0';
+            assessment.errorMessage[numberIndex++] = '\0';
 
             // sprintf(errorLine, "There was a card with the wrong card format on line %d", cardCounter + 1);
 
             assessment.statusCode = WRONGCARDFORMAT;
-            assessment.errorMessage = errorLine;
             fclose(pFile);
             return assessment;
 
             // If a cards has already been added to the cardArray : Duplicate
         } else if (checkCards[currentCard.suit - 1][currentCard.value - 1]) {
+            error = "There was a duplicate card on line ";
 
-            char errorLine[BUFFER_SIZE];
+            int onesValue = (cardCounter + 1) % 10;
+            int tensValue = (cardCounter + 1) / 10;
 
-            sprintf(errorLine, "There was a duplicate card on line %d", cardCounter + 1);
+            assessment.errorMessage = malloc(strlen(error) + 1 + (tensValue > 0) + 1);
+            for (int i = 0; i < strlen(error); i++) {
+                assessment.errorMessage[i] = error[i];
+            }
+
+            int numberIndex = 35;
+            if (tensValue > 0) {
+                assessment.errorMessage[numberIndex++] = tensValue + '0';
+            }
+            assessment.errorMessage[numberIndex++] = onesValue + '0';
+            assessment.errorMessage[numberIndex++] = '\0';
 
             assessment.statusCode = DUPLICATE;
-            assessment.errorMessage = errorLine;
             fclose(pFile);
             return assessment;
         }
@@ -75,25 +96,37 @@ FileAssessment readDeckFromFile(char *filename) {
 
     // If there wasn't enough cards to make a full deck
     if (cardCounter != 52) {
+        error = "There was not enough cards to make a full deck with the given file. The last read line is line ";
 
-        char errorLine[BUFFER_SIZE];
+        int onesValue = (cardCounter + 1) % 10;
+        int tensValue = (cardCounter + 1) / 10;
 
-        sprintf(errorLine,
-                "There was not enough cards to make a full deck with the given file. The last read line is line %d",
-                cardCounter + 1);
+        assessment.errorMessage = malloc(strlen(error) + 1 + (tensValue > 0) + 1);
+        for (int i = 0; i < strlen(error); i++) {
+            assessment.errorMessage[i] = error[i];
+        }
+
+        int numberIndex = 95;
+        if (tensValue > 0) {
+            assessment.errorMessage[numberIndex++] = tensValue + '0';
+        }
+        assessment.errorMessage[numberIndex++] = onesValue + '0';
+        assessment.errorMessage[numberIndex++] = '\0';
 
         assessment.statusCode = MISSINGCARDS;
-        assessment.errorMessage = errorLine;
-
         return assessment;
     }
 
     // If everything goes well
 
+    error = "OK";
+    assessment.errorMessage = malloc(strlen(error) + 1);
+    for (int i = 0; i < strlen(error); i++) {
+        assessment.errorMessage[i] = error[i];
+    }
+    assessment.errorMessage[strlen(error)] = '\0';
     assessment.statusCode = SUCCESS;
-    assessment.errorMessage = "OK";
     assessment.deck = cards;
-
     return assessment;
 }
 

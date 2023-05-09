@@ -98,7 +98,11 @@ char *performCommand(GameState *game, Command command) {
                 setDeck(game->board, makeDeck());
             }
             showcaseMode(game->board);
-            return "OK";
+            char* ldMessage = malloc(3);
+            ldMessage[0] = 'O';
+            ldMessage[1] = 'K';
+            ldMessage[2] = '\0';
+            return ldMessage;
         case SW:
             if (!hasDeck(game->board)) {
                 return "No deck";

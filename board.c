@@ -252,8 +252,6 @@ char* performUndo(Board* board, char* moveToUndo) {
 
     bool shouldHideCard = moveToUndo[moveToUndoLength + 1] == '1';
 
-    printf("Move: %s\nReversed: %s\n", moveToUndo, reversedMove);
-
     forceMove(board, makeGameMoveCommand(reversedMove), shouldHideCard);
     char* undoMove = malloc(strlen(moveToUndo) + 1);
     for (int i = 0; i < reversedMoveLength; i++) {
@@ -262,7 +260,6 @@ char* performUndo(Board* board, char* moveToUndo) {
     undoMove[strlen(moveToUndo) - 2] = ' ';
     undoMove[strlen(moveToUndo) - 1] = !shouldHideCard + '0';
     undoMove[strlen(moveToUndo)] = '\0';
-    printf("Move: %s\nUndo: %s\n", moveToUndo, undoMove);
     return undoMove;
 }
 
