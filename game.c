@@ -102,6 +102,7 @@ char *performCommand(GameState *game, Command command) {
             ldMessage[0] = 'O';
             ldMessage[1] = 'K';
             ldMessage[2] = '\0';
+            game->cardsShown = false;
             return ldMessage;
         case SW:
             if (!hasDeck(game->board)) {
@@ -109,6 +110,7 @@ char *performCommand(GameState *game, Command command) {
             }
             showcaseMode(game->board);
             showAll(game->board);
+            game->cardsShown = true;
             return "OK";
         case SI:
             if (!hasDeck(game->board)) {
@@ -136,6 +138,10 @@ char *performCommand(GameState *game, Command command) {
                 removeCard(shuffledInterleaved, interleavedDeck[i]);
             }
             setDeck(game->board, interleavedDeck);
+            if (game->cardsShown) {
+                showcaseMode(game->board);
+                showAll(game->board);
+            }
             return "OK";
         case SR:
             if (!hasDeck(game->board)) {
@@ -152,6 +158,10 @@ char *performCommand(GameState *game, Command command) {
                 removeCard(randomlyShuffled, randomDeck[i]);
             }
             setDeck(game->board, randomDeck);
+            if (game->cardsShown) {
+                showcaseMode(game->board);
+                showAll(game->board);
+            }
             return "OK";
         case SD:
             if (!hasDeck(game->board)) {
@@ -160,7 +170,6 @@ char *performCommand(GameState *game, Command command) {
             char *filename = (command.hasArguments) ? command.arguments : "cards.txt";
             saveDeckToFile(filename, game->board->deck);
             return "OK";
-            // TODO can make use of perform command?
         case AUTO:
             bool movedSomething;
             char *moveCommand = malloc(6 + 1);

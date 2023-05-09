@@ -24,6 +24,7 @@ typedef struct GameState
     Board* board;
     MoveStack* moves;
     MoveStack* undoneMoves;
+    bool cardsShown;
 } GameState;
 
 
