@@ -39,6 +39,9 @@ int main() {
         if (userInput == NULL) {
             continue;
         }
+        for (int i = 0; i < strlen(userInput); i++) {
+            userInput[i] = toupper(userInput[i]);
+        }
 
         if (lastCommand.name == LD && lastCommand.error == NONE) {
             free(message);
